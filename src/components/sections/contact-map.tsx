@@ -52,26 +52,22 @@ export function ContactMap() {
                         </div>
                     </div>
 
-                    {/* Map Column (Placeholder) */}
+                    {/* Map Column */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         className="relative h-[500px] w-full rounded-[3rem] overflow-hidden border border-border/50 shadow-2xl"
                     >
-                        {/* Visual placeholder for Map */}
-                        <div className="absolute inset-0 bg-secondary/50 flex flex-col items-center justify-center space-y-4 text-center p-8">
-                            <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center text-primary animate-bounce">
-                                <MapPin className="h-10 w-10 flex-shrink-0" />
-                            </div>
-                            <h3 className="text-xl font-black text-card-foreground">İnteraktif Harita</h3>
-                            <p className="text-sm text-muted-foreground max-w-xs font-medium">
-                                Google Maps entegrasyonu buraya gelecek.
-                            </p>
-                            <div className="w-full max-w-md h-32 bg-primary/5 rounded-2xl border-2 border-dashed border-primary/20" />
-                        </div>
-
-                        {/* Background Texture */}
-                        <div className="absolute inset-0 dot-pattern opacity-10 pointer-events-none" />
+                        <iframe
+                            src="https://maps.google.com/maps?q=Kad%C4%B1k%C3%B6y,%C4%B0stanbul&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                            width="100%"
+                            height="100%"
+                            style={{ border: 0 }}
+                            allowFullScreen
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            title="Kadıköy İstanbul Konum"
+                        />
                     </motion.div>
 
                 </div>
