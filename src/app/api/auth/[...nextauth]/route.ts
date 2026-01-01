@@ -6,6 +6,9 @@ const handler = NextAuth(authOptions);
 // Force NEXTAUTH_URL in production to fix Vercel deployment issue
 if (process.env.NODE_ENV === "production") {
     process.env.NEXTAUTH_URL = "https://hospital-two-rouge.vercel.app";
+} else {
+    // In development, ensure consistent URL
+    process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 }
 
 export { handler as GET, handler as POST };
