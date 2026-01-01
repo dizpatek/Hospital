@@ -55,22 +55,35 @@ export default function LoginForm() {
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log("Submit triggered", values);
         setIsLoading(true);
         setError(null);
 
-        const result = await signIn("credentials", {
-            email: values.email,
-            password: values.password,
-            redirect: false,
-        });
+        try {
+            console.log("Calling signIn...");
+            const result = await signIn("credentials", {
+                email: values.email,
+                password: values.password,
+                redirect: false,
+            });
+            console.log("signIn result:", result);
 
-        setIsLoading(false);
+            setIsLoading(false);
 
-        if (result?.error) {
-            setError("Invalid credentials");
-        } else {
-            router.push("/admin/dashboard");
-            router.refresh();
+            if (result?.error) {
+                console.error("Login Error:", result.error);
+                setError("Geçersiz e-posta veya şifre.");
+                import("sonner").then(({ toast }) => toast.error("Giriş Başarısız: " + result.error));
+            } else if (result?.ok) {
+                import("sonner").then(({ toast }) => toast.success("Giriş başarılı! Yönlendiriliyorsunuz..."));
+                router.push("/admin/dashboard");
+                router.refresh();
+            }
+        } catch (err: any) {
+            console.error("Critical Login Error:", err);
+            setIsLoading(false);
+            setError("Bir hata oluştu. Lütfen tekrar deneyin.");
+            import("sonner").then(({ toast }) => toast.error("Sistem Hatası: " + err.message));
         }
     }
 

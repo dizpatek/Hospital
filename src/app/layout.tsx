@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { Providers } from "@/components/providers";
 import { Toaster } from "sonner";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 
@@ -40,7 +41,9 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          {children}
+          <Providers>
+            {children}
+          </Providers>
           <WhatsAppButton />
           <Toaster position="top-center" richColors />
         </ThemeProvider>
