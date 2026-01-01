@@ -118,6 +118,52 @@ export default function SettingsPage() {
         }
     };
 
+    const onSocialMediaSubmit = async (data: z.infer<typeof socialMediaSchema>) => {
+        setLoading(true);
+        try {
+            const res = await fetch("/api/admin/settings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            const result = await res.json();
+
+            if (result.success) {
+                toast.success("Sosyal medya ayarları kaydedildi");
+            } else {
+                toast.error("Ayarlar kaydedilemedi");
+            }
+        } catch (error) {
+            toast.error("Bir hata oluştu");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const onSeoSubmit = async (data: z.infer<typeof seoSchema>) => {
+        setLoading(true);
+        try {
+            const res = await fetch("/api/admin/settings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            const result = await res.json();
+
+            if (result.success) {
+                toast.success("SEO ayarları kaydedildi");
+            } else {
+                toast.error("Ayarlar kaydedilemedi");
+            }
+        } catch (error) {
+            toast.error("Bir hata oluştu");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="space-y-8">
             <div>
@@ -248,7 +294,7 @@ export default function SettingsPage() {
                             <CardDescription>Sosyal medya hesaplarınızı ekleyin</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form onSubmit={socialForm.handleSubmit(onSiteSettingsSubmit)} className="space-y-4">
+                            <form onSubmit={socialForm.handleSubmit(onSocialMediaSubmit)} className="space-y-4">
                                 <div className="grid gap-4 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <Label htmlFor="facebookUrl">Facebook URL</Label>
@@ -282,7 +328,7 @@ export default function SettingsPage() {
                             <CardDescription>Arama motoru optimizasyonu ayarları</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form onSubmit={seoForm.handleSubmit(onSiteSettingsSubmit)} className="space-y-4">
+                            <form onSubmit={seoForm.handleSubmit(onSeoSubmit)} className="space-y-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="metaTitle">Meta Başlık</Label>
                                     <Input id="metaTitle" {...seoForm.register("metaTitle")} />
