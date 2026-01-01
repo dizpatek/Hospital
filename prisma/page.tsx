@@ -169,14 +169,10 @@ export default async function AdminProceduresPage() {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-12 h-12 rounded-lg bg-slate-800 border border-slate-700 overflow-hidden flex-shrink-0">
-                                                    {proc.imageUrl ? (
-                                                        <img src={proc.imageUrl} alt="" className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-slate-600"><Icons.Image className="w-5 h-5" /></div>
-                                                    )}
+                                                    <div className="w-full h-full flex items-center justify-center text-slate-600"><Icons.Image className="w-5 h-5" /></div>
                                                 </div>
                                                 <div>
-                                                    <div className="font-bold text-white text-base mb-0.5">{proc.title}</div>
+                                                    <div className="font-bold text-white text-base mb-0.5">{proc.name}</div>
                                                     <div className="flex items-center gap-2 text-xs">
                                                         <span className="flex items-center gap-1 bg-slate-800 px-1.5 py-0.5 rounded text-slate-400">
                                                             <Icons.Box className="w-3 h-3" /> {proc.icon}

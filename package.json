@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "conf-wiz": "node scripts/conf-wiz.js",
+    "deploy-vercel": "node scripts/deploy-vercel.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

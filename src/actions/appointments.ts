@@ -4,12 +4,9 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 
 const AppointmentSchema = z.object({
-    fullName: z.string().min(2, "Lütfen tam adınızı giriniz"),
-    email: z.string().email("Geçerli bir e-posta adresi giriniz"),
+    name: z.string().min(2, "Lütfen adınızı giriniz"),
     phone: z.string().min(10, "Geçerli bir telefon numarası giriniz"),
-    procedureId: z.string().optional(),
     message: z.string().optional(),
-    preferredDate: z.string().optional(),
 });
 
 export async function createAppointmentRequest(data: z.infer<typeof AppointmentSchema>) {
@@ -18,12 +15,9 @@ export async function createAppointmentRequest(data: z.infer<typeof AppointmentS
 
         await prisma.appointmentRequest.create({
             data: {
-                fullName: validatedData.fullName,
-                email: validatedData.email,
+                name: validatedData.name,
                 phone: validatedData.phone,
-                procedureId: validatedData.procedureId || null,
                 message: validatedData.message || null,
-                preferredDate: validatedData.preferredDate ? new Date(validatedData.preferredDate) : null,
             },
         });
 

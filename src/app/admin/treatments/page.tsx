@@ -57,7 +57,7 @@ export default async function TreatmentsAdminPage() {
                                                     {proc.name}
                                                 </h3>
                                                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 line-clamp-3 leading-relaxed">
-                                                    {proc.description ||
+                                                    {proc.summary ||
                                                         "Bu prosedür hakkında detaylı bilgi henüz eklenmemiş."}
                                                 </p>
                                                 <Link

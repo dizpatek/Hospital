@@ -28,11 +28,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { createAppointmentRequest } from "@/actions/appointments";
 
 const AppointmentSchema = z.object({
-    fullName: z.string().min(2, "Lütfen tam adınızı giriniz"),
-    email: z.string().email("Geçerli bir e-posta adresi giriniz"),
+    name: z.string().min(2, "Lütfen adınızı giriniz"),
     phone: z.string().min(10, "Geçerli bir telefon numarası giriniz (en az 10 hane)"),
     message: z.string().optional(),
-    preferredDate: z.string().optional(),
 });
 
 interface AppointmentDialogProps {
@@ -46,18 +44,23 @@ export function AppointmentDialog({ children }: AppointmentDialogProps) {
     const form = useForm<z.infer<typeof AppointmentSchema>>({
         resolver: zodResolver(AppointmentSchema),
         defaultValues: {
-            fullName: "",
-            email: "",
+            name: "",
             phone: "",
             message: "",
-            preferredDate: "",
         },
     });
 
     async function onSubmit(values: z.infer<typeof AppointmentSchema>) {
         setLoading(true);
         try {
-            const result = await createAppointmentRequest(values);
+            // Transform the form data to match what the server action expects
+            const appointmentData = {
+                name: values.name,
+                phone: values.phone,
+                message: values.message,
+            };
+            
+            const result = await createAppointmentRequest(appointmentData);
             if (result.success) {
                 toast.success(result.message);
                 setOpen(false);
@@ -88,7 +91,7 @@ export function AppointmentDialog({ children }: AppointmentDialogProps) {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-4">
                         <FormField
                             control={form.control}
-                            name="fullName"
+                            name="name"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-slate-700 dark:text-slate-300 font-semibold">Ad Soyad</FormLabel>
@@ -99,47 +102,20 @@ export function AppointmentDialog({ children }: AppointmentDialogProps) {
                                 </FormItem>
                             )}
                         />
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-slate-700 dark:text-slate-300 font-semibold">E-posta</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="örnek@eposta.com" className="rounded-xl h-12 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="phone"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-slate-700 dark:text-slate-300 font-semibold">Telefon</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="05XX XXX XX XX" className="rounded-xl h-12 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
                         <FormField
                             control={form.control}
-                            name="preferredDate"
+                            name="phone"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-slate-700 dark:text-slate-300 font-semibold">Tercih Edilen Tarih (Opsiyonel)</FormLabel>
+                                    <FormLabel className="text-slate-700 dark:text-slate-300 font-semibold">Telefon</FormLabel>
                                     <FormControl>
-                                        <Input type="date" className="rounded-xl h-12 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800" {...field} />
+                                        <Input placeholder="05XX XXX XX XX" className="rounded-xl h-12 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+
                         <FormField
                             control={form.control}
                             name="message"

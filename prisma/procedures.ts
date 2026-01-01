@@ -8,12 +8,18 @@ const prisma = new PrismaClient()
 
 // Zod Şeması (Form Validasyonu için)
 export const procedureSchema = z.object({
-    title: z.string().min(2, "Başlık en az 2 karakter olmalıdır."),
-    slug: z.string().min(2, "URL (Slug) en az 2 karakter olmalıdır.").regex(/^[a-z0-9-]+$/, "Sadece küçük harf, rakam ve tire kullanılabilir."),
-    icon: z.string().min(1, "Bir ikon ismi giriniz (örn: Zap)."),
-    summary: z.string().min(10, "Özet en az 10 karakter olmalıdır."),
-    content: z.string().min(20, "İçerik detaylı olmalıdır."),
-    imageUrl: z.string().url("Geçerli bir görsel URL'si giriniz.").optional().or(z.literal('')),
+    name: z.string().min(2, "Name is required"),
+    slug: z.string().min(2, "Slug is required").regex(/^[a-z0-9-]+$/, "Only lowercase letters, numbers and dashes allowed"),
+    icon: z.string().min(1, "Icon is required"),
+    summary: z.string().min(10, "Summary is required"),
+    why: z.string().optional(),
+    how: z.string().optional(),
+    sideEffects: z.string().optional(),
+    faq: z.string().optional(),
+    treatmentCategoryId: z.string().min(1, "Treatment Category is required"),
+    status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]),
+    seoTitle: z.string().optional(),
+    seoDesc: z.string().optional(),
 })
 
 export async function createProcedure(data: z.infer<typeof procedureSchema>) {
@@ -23,7 +29,20 @@ export async function createProcedure(data: z.infer<typeof procedureSchema>) {
 
         // Veritabanına Kayıt
         await prisma.procedure.create({
-            data: validated
+            data: {
+                name: validated.name,
+                slug: validated.slug,
+                icon: validated.icon,
+                summary: validated.summary,
+                why: validated.why,
+                how: validated.how,
+                sideEffects: validated.sideEffects,
+                faq: validated.faq ? JSON.parse(validated.faq) : undefined,
+                treatmentCategoryId: validated.treatmentCategoryId,
+                status: validated.status,
+                seoTitle: validated.seoTitle,
+                seoDesc: validated.seoDesc,
+            }
         })
 
         revalidatePath('/admin/procedures') // Admin listesini yenile

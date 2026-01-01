@@ -1,8 +1,9 @@
 "use client";
 
+import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ChevronRight, Stethoscope } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import * as LucideIcons from "lucide-react";
 
@@ -30,7 +31,7 @@ export function ProceduresList({ procedures }: { procedures: Procedure[] }) {
         if (!LucideIcon) {
             return <LucideIcons.Stethoscope className={className} />;
         }
-        return <LucideIcon className={className} />;
+        return React.createElement(LucideIcon as React.FC<any>, { className });
     };
 
 

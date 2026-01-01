@@ -1,5 +1,4 @@
-require('dotenv/config');
-
+// Prisma configuration for production
 module.exports = {
     schema: "prisma/schema.prisma",
     migrations: {
@@ -9,3 +8,4 @@ module.exports = {
         url: process.env.DATABASE_URL,
     },
 };
+

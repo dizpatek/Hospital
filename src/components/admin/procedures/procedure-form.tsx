@@ -93,7 +93,7 @@ export function ProcedureForm({ procedure, categories }: ProcedureFormProps) {
 
                 <div className="space-y-2">
                     <Label htmlFor="treatmentCategoryId">Treatment Category</Label>
-                    <Select name="treatmentCategoryId" defaultValue={procedure?.treatmentCategoryId}>
+                    <Select name="treatmentCategoryId" defaultValue={procedure?.treatmentCategoryId || ""}>
                         <SelectTrigger>
                             <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
@@ -111,12 +111,84 @@ export function ProcedureForm({ procedure, categories }: ProcedureFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="description">Description (Optional)</Label>
+                    <Label htmlFor="summary">Summary</Label>
                     <Textarea
-                        id="description"
-                        name="description"
-                        defaultValue={procedure?.description || ""}
-                        placeholder="Brief description of the procedure..."
+                        id="summary"
+                        name="summary"
+                        defaultValue={procedure?.summary || ""}
+                        placeholder="Brief summary of the procedure..."
+                        required
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="icon">Icon</Label>
+                    <Input
+                        id="icon"
+                        name="icon"
+                        defaultValue={procedure?.icon || ""}
+                        placeholder="e.g. Zap"
+                        required
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="why">Why</Label>
+                    <Textarea
+                        id="why"
+                        name="why"
+                        defaultValue={procedure?.why || ""}
+                        placeholder="Why this procedure..."
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="how">How</Label>
+                    <Textarea
+                        id="how"
+                        name="how"
+                        defaultValue={procedure?.how || ""}
+                        placeholder="How the procedure works..."
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="sideEffects">Side Effects</Label>
+                    <Textarea
+                        id="sideEffects"
+                        name="sideEffects"
+                        defaultValue={procedure?.sideEffects || ""}
+                        placeholder="Potential side effects..."
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="faq">FAQ (JSON format)</Label>
+                    <Textarea
+                        id="faq"
+                        name="faq"
+                        defaultValue={procedure?.faq || ""}
+                        placeholder='{"question": "answer"}'
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="seoTitle">SEO Title</Label>
+                    <Input
+                        id="seoTitle"
+                        name="seoTitle"
+                        defaultValue={procedure?.seoTitle || ""}
+                        placeholder="SEO Title"
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="seoDesc">SEO Description</Label>
+                    <Textarea
+                        id="seoDesc"
+                        name="seoDesc"
+                        defaultValue={procedure?.seoDesc || ""}
+                        placeholder="SEO Description"
                     />
                 </div>
 

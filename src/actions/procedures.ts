@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-const procedureSchema = z.object({
+export const procedureSchema = z.object({
     name: z.string().min(1, "Name is required"),
     slug: z.string().min(1, "Slug is required"),
     icon: z.string().min(1, "Icon is required"),
@@ -19,6 +19,11 @@ const procedureSchema = z.object({
     seoTitle: z.string().optional(),
     seoDesc: z.string().optional(),
 });
+
+// FormData type for server actions
+// This should be the actual FormData object, not the parsed data
+// The inferred type is for the parsed result
+export type ProcedureFormData = z.infer<typeof procedureSchema>;
 
 export type ProcedureFormState = {
     errors?: {
@@ -41,21 +46,29 @@ export type ProcedureFormState = {
 
 export async function createProcedure(
     prevState: ProcedureFormState,
-    formData: FormData
+    formData: FormData | Record<string, any>
 ): Promise<ProcedureFormState> {
+    // Helper function to get values from either FormData or regular object
+    const getValue = (key: string): string | null => {
+        if (formData instanceof FormData) {
+            return formData.get(key) as string || null;
+        }
+        return (formData as Record<string, any>)[key] || null;
+    };
+    
     const validatedFields = procedureSchema.safeParse({
-        name: formData.get("name"),
-        slug: formData.get("slug"),
-        icon: formData.get("icon"),
-        summary: formData.get("summary"),
-        why: formData.get("why"),
-        how: formData.get("how"),
-        sideEffects: formData.get("sideEffects"),
-        faq: formData.get("faq"),
-        treatmentCategoryId: formData.get("treatmentCategoryId"),
-        status: formData.get("status"),
-        seoTitle: formData.get("seoTitle"),
-        seoDesc: formData.get("seoDesc"),
+        name: getValue("name"),
+        slug: getValue("slug"),
+        icon: getValue("icon"),
+        summary: getValue("summary"),
+        why: getValue("why"),
+        how: getValue("how"),
+        sideEffects: getValue("sideEffects"),
+        faq: getValue("faq"),
+        treatmentCategoryId: getValue("treatmentCategoryId"),
+        status: getValue("status"),
+        seoTitle: getValue("seoTitle"),
+        seoDesc: getValue("seoDesc"),
     });
 
     if (!validatedFields.success) {
@@ -107,21 +120,29 @@ export async function createProcedure(
 export async function updateProcedure(
     id: string,
     prevState: ProcedureFormState,
-    formData: FormData
+    formData: FormData | Record<string, any>
 ): Promise<ProcedureFormState> {
+    // Helper function to get values from either FormData or regular object
+    const getValue = (key: string): string | null => {
+        if (formData instanceof FormData) {
+            return formData.get(key) as string || null;
+        }
+        return (formData as Record<string, any>)[key] || null;
+    };
+    
     const validatedFields = procedureSchema.safeParse({
-        name: formData.get("name"),
-        slug: formData.get("slug"),
-        icon: formData.get("icon"),
-        summary: formData.get("summary"),
-        why: formData.get("why"),
-        how: formData.get("how"),
-        sideEffects: formData.get("sideEffects"),
-        faq: formData.get("faq"),
-        treatmentCategoryId: formData.get("treatmentCategoryId"),
-        status: formData.get("status"),
-        seoTitle: formData.get("seoTitle"),
-        seoDesc: formData.get("seoDesc"),
+        name: getValue("name"),
+        slug: getValue("slug"),
+        icon: getValue("icon"),
+        summary: getValue("summary"),
+        why: getValue("why"),
+        how: getValue("how"),
+        sideEffects: getValue("sideEffects"),
+        faq: getValue("faq"),
+        treatmentCategoryId: getValue("treatmentCategoryId"),
+        status: getValue("status"),
+        seoTitle: getValue("seoTitle"),
+        seoDesc: getValue("seoDesc"),
     });
 
     if (!validatedFields.success) {

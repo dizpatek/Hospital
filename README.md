@@ -138,7 +138,20 @@ Creating a new Procedure in the admin panel must automatically:
 - **Strict Typing:** No `any` types in TypeScript.
 - **Mobile First:** Design must be flawlessly responsive.
 
-## 7. Folder Structure Reference
+## 7. Deployment
+
+This application is optimized for deployment on Vercel. Follow these steps to deploy:
+
+1. Ensure you have set up all required environment variables
+2. Run `npm run conf-wiz` to help configure your environment
+3. Push your code to a Git repository
+4. Import the repository into Vercel
+5. Add the required environment variables in the Vercel dashboard
+6. Deploy!
+
+For detailed deployment instructions, see [docs/vercel-deployment.md](./docs/vercel-deployment.md)
+
+## 8. Folder Structure Reference
 *(Recommended structure)*
 ```text
 src/

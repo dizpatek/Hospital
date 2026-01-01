@@ -16,14 +16,13 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
     const { slug } = await params;
     const post = await prisma.blogPost.findUnique({
         where: { slug: slug },
-        include: { seo: true },
     });
 
     if (!post) return { title: "Makale Bulunamadı" };
 
     return {
-        title: post.seo?.metaTitle || `${post.title} | MedDoc Üroloji Blog`,
-        description: post.seo?.metaDescription || post.excerpt || `${post.title} başlıklı tıbbi makalemizi okuyun.`,
+        title: `${post.title} | MedDoc Üroloji Blog`,
+        description: post.excerpt || `${post.title} başlıklı tıbbi makalemizi okuyun.`,
     };
 }
 
@@ -33,7 +32,6 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
         where: { slug: slug },
         include: {
             category: true,
-            seo: true,
         },
     });
 
