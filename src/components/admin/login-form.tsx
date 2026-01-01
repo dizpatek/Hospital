@@ -116,10 +116,14 @@ export default function LoginForm() {
                 setError("Geçersiz e-posta veya şifre.");
                 import("sonner").then(({ toast }) => toast.error("Hata: " + result.error));
             } else if (result?.ok) {
-                addLog("Login Success! Redirecting...");
-                import("sonner").then(({ toast }) => toast.success("Giriş başarılı!"));
-                // Hard redirect
-                window.location.href = "/admin/dashboard";
+                addLog("Login Success! Waiting for session...");
+                import("sonner").then(({ toast }) => toast.success("Giriş başarılı! Yönlendiriliyorsunuz..."));
+
+                // Wait a bit for the session cookie to be set, then redirect
+                setTimeout(() => {
+                    addLog("Redirecting to dashboard...");
+                    window.location.href = "/admin/dashboard";
+                }, 1000); // 1 second delay to ensure cookie is set
             } else {
                 addLog("Unknown result state");
             }
