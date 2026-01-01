@@ -10,9 +10,9 @@ const allowedScripts = ['add-blogs', 'conf-wiz', 'create-admin', 'deploy-vercel'
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { script: string } }
+    { params }: { params: Promise<{ script: string }> }
 ) {
-    const { script } = params;
+    const { script } = await params;
 
     if (!allowedScripts.includes(script)) {
         return NextResponse.json(
