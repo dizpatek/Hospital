@@ -54,7 +54,6 @@ export async function GET() {
 
         // Get or create settings
         let settings = await prisma.siteSettings.findFirst();
-        console.log('settings:', settings, 'has seedData:', settings && 'seedData' in settings);
 
         let seedData;
         if (settings?.seedData) {

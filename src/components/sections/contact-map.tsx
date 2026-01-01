@@ -13,6 +13,7 @@ interface SiteSettings {
 
 export function ContactMap() {
     const [settings, setSettings] = useState<SiteSettings>({});
+    const [mapSrc, setMapSrc] = useState("https://maps.google.com/maps?q=Kad%C4%B1k%C3%B6y,%C4%B0stanbul&t=&z=15&ie=UTF8&iwloc=&output=embed");
 
     useEffect(() => {
         const fetchSettings = async () => {
@@ -21,6 +22,9 @@ export function ContactMap() {
                 const data = await response.json();
                 if (data.success) {
                     setSettings(data.data);
+                    // Update map src with the address from settings
+                    const address = data.data.address || 'Kadıköy, İstanbul';
+                    setMapSrc(`https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`);
                 }
             } catch (error) {
                 console.error('Failed to fetch settings:', error);
@@ -112,14 +116,14 @@ export function ContactMap() {
                         className="relative h-full w-full rounded-[3rem] overflow-hidden border border-border/50 shadow-2xl"
                     >
                         <iframe
-                            src="https://maps.google.com/maps?q=Kad%C4%B1k%C3%B6y,%C4%B0stanbul&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                            src={mapSrc}
                             width="100%"
                             height="100%"
                             style={{ border: 0 }}
                             allowFullScreen
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
-                            title="Kadıköy İstanbul Konum"
+                            title="Konum Haritası"
                         />
                     </motion.div>
 
