@@ -25,7 +25,7 @@ export function Hero() {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5 }}
-                            className="inline-flex items-center rounded-full bg-white/10 backdrop-blur-md px-4 py-1.5 text-sm font-bold text-primary-foreground border border-white/20"
+                            className="inline-flex items-center rounded-full bg-white/10 backdrop-blur-md px-4 py-1.5 text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 border border-white/20"
                         >
                             <Star className="mr-2 h-4 w-4 fill-current" />
                             Güvenilir Uzman Üroloji Kliniği

@@ -11,7 +11,7 @@ export function Footer() {
                     {/* Logo and Brand */}
                     <div className="space-y-8">
                         <Link href="/" className="text-3xl font-black tracking-tighter text-primary">
-                            MED<span className="text-foreground">DOC</span>
+                            MED<span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">DOC</span>
                         </Link>
                         <p className="text-muted-foreground text-sm leading-relaxed font-medium">
                             Üroloji ve Androlojide Mükemmeliyet. Yetişkin ve pediatrik hastalar için profesyonel, şefkatli ve ileri düzey tıbbi bakım sağlıyoruz. En modern cerrahi tekniklerle yaşam kalitenizi artırıyoruz.
