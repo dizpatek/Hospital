@@ -23,7 +23,7 @@ export async function GET() {
             prisma.blogPost.count(),
             prisma.treatmentCategory.count(),
             prisma.appointmentRequest.findMany({
-                take: 5,
+                take: 6,
                 orderBy: { createdAt: "desc" }
             })
         ]);

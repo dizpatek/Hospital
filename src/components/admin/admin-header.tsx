@@ -32,6 +32,7 @@ export default function AdminHeader({ breadcrumbs = [{ label: 'Admin' }, { label
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [notifications, setNotifications] = useState<{ loading: boolean; error: string | null; data: any[] }>({ loading: true, error: null, data: [] });
 
     useEffect(() => {
         if (searchQuery.length >= 2) {
@@ -48,6 +49,21 @@ export default function AdminHeader({ breadcrumbs = [{ label: 'Admin' }, { label
             setSearchResults([]);
         }
     }, [searchQuery]);
+
+    useEffect(() => {
+        fetch('/api/admin/dashboard')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    setNotifications({ loading: false, error: null, data: data.requests });
+                } else {
+                    setNotifications({ loading: false, error: data.message || 'Error', data: [] });
+                }
+            })
+            .catch(err => {
+                setNotifications({ loading: false, error: 'Network error', data: [] });
+            });
+    }, []);
 
     return (
         <header className="h-24 sticky top-0 z-40 bg-zinc-900/80 backdrop-blur-2xl border-b border-white/5 px-4 lg:px-10 flex items-center justify-between">
@@ -126,21 +142,37 @@ export default function AdminHeader({ breadcrumbs = [{ label: 'Admin' }, { label
                     <DropdownMenuTrigger asChild>
                         <button className="relative p-3 text-zinc-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all">
                             <Bell className="h-5 w-5" />
-                            <span className="absolute top-3 right-3 h-2 w-2 bg-primary rounded-full ring-4 ring-zinc-900"></span>
+                            <span className="absolute top-3 right-3 h-2 w-2 bg-primary rounded-full ring-4 ring-zinc-900 pointer-events-none"></span>
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-80 bg-zinc-900 border-white/5">
                         <div className="p-4">
-                            <h3 className="text-sm font-medium text-white mb-2">Bildirimler</h3>
-                            <div className="space-y-2">
-                                <DropdownMenuItem className="p-3 rounded-lg hover:bg-white/5 cursor-pointer">
-                                    <div className="text-sm text-white">Yeni randevu talebi</div>
-                                    <div className="text-xs text-zinc-400">2 dakika önce</div>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="p-3 rounded-lg hover:bg-white/5 cursor-pointer">
-                                    <div className="text-sm text-white">Blog yazısı onaylandı</div>
-                                    <div className="text-xs text-zinc-400">1 saat önce</div>
-                                </DropdownMenuItem>
+                            <h3 className="text-sm font-medium text-white mb-2">Son Randevu Talepleri</h3>
+                            <p className="text-xs text-zinc-400 mb-4">Web sitesinden gelen son 6 bildirim.</p>
+                            {notifications.loading && <p className="text-zinc-400">Yükleniyor...</p>}
+                            {notifications.error && <p className="text-zinc-400">Hata: {notifications.error}</p>}
+                            {!notifications.loading && !notifications.error && (
+                                <div className="space-y-2">
+                                    {notifications.data.map((req) => (
+                                        <DropdownMenuItem key={req.id} asChild className="p-3 rounded-lg hover:bg-white/5 cursor-pointer">
+                                            <Link href={`/admin/appointments/${req.id}`}>
+                                                <div className="text-sm text-white">{req.name}</div>
+                                                <div className="text-xs text-zinc-400">
+                                                    {new Date(req.createdAt).toLocaleDateString('tr-TR', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
+                                                </div>
+                                                {req.message && <div className="text-xs text-zinc-500 truncate">{req.message}</div>}
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    ))}
+                                </div>
+                            )}
+                            <div className="mt-4 pt-4 border-t border-white/5">
+                                <Link href="/admin/appointments" className="text-sm text-primary hover:underline">Tümünü Gör</Link>
                             </div>
                         </div>
                     </DropdownMenuContent>
