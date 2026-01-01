@@ -31,7 +31,7 @@ export function ContactMap() {
     return (
         <section id="contact" className="py-32 bg-background relative">
             <div className="container mx-auto px-4 md:px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-stretch">
 
                     {/* Info Column */}
                     <div className="space-y-12">
@@ -51,7 +51,7 @@ export function ContactMap() {
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div className="space-y-8">
                             <div className="space-y-4 p-8 rounded-3xl bg-secondary/30 border border-border/50">
                                 <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                                     <MapPin className="h-6 w-6" />
@@ -91,9 +91,7 @@ export function ContactMap() {
                                     {settings.whatsappNumber || "WhatsApp bilgisi yükleniyor..."}
                                 </p>
                             </div>
-                        </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                             <div className="space-y-4 p-8 rounded-3xl bg-secondary/30 border border-border/50">
                                 <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                                     <Clock className="h-6 w-6" />
@@ -111,7 +109,7 @@ export function ContactMap() {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
-                        className="relative h-[500px] w-full rounded-[3rem] overflow-hidden border border-border/50 shadow-2xl"
+                        className="relative h-full w-full rounded-[3rem] overflow-hidden border border-border/50 shadow-2xl"
                     >
                         <iframe
                             src="https://maps.google.com/maps?q=Kad%C4%B1k%C3%B6y,%C4%B0stanbul&t=&z=15&ie=UTF8&iwloc=&output=embed"
