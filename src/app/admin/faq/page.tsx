@@ -68,7 +68,9 @@ export default async function AdminFAQPage() {
                                             <span className="px-3 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded-lg">AKTİF</span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <Button variant="ghost" size="sm" className="text-primary font-bold hover:bg-primary/10">Düzenle</Button>
+                                            <Button asChild variant="ghost" size="sm" className="text-primary font-bold hover:bg-primary/10">
+                                                <Link href={`/admin/faq/${faq.id}`}>Düzenle</Link>
+                                            </Button>
                                         </td>
                                     </tr>
                                 ))}

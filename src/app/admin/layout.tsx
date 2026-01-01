@@ -38,7 +38,7 @@ export default async function AdminLayout({
     ];
 
     return (
-        <div className="dark flex min-h-screen bg-[#09090b] text-zinc-100 font-sans selection:bg-primary/30">
+        <div className="dark flex min-h-screen bg-zinc-900 text-zinc-100 font-sans selection:bg-primary/30">
             {/* Sidebar */}
             <aside className="fixed inset-y-0 left-0 z-50 w-80 bg-zinc-950 border-r border-white/5 hidden lg:flex flex-col shadow-[20px_0_50px_rgba(0,0,0,0.3)]">
                 {/* Logo Section */}
@@ -116,7 +116,7 @@ export default async function AdminLayout({
             {/* Main Content Area */}
             <div className="flex-1 lg:ml-80 flex flex-col min-h-screen">
                 {/* Header */}
-                <header className="h-24 sticky top-0 z-40 bg-[#09090b]/80 backdrop-blur-2xl border-b border-white/5 px-10 flex items-center justify-between">
+                <header className="h-24 sticky top-0 z-40 bg-zinc-900/80 backdrop-blur-2xl border-b border-white/5 px-10 flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
                             <span className="hover:text-primary cursor-pointer transition-colors">Admin</span>
@@ -128,7 +128,7 @@ export default async function AdminLayout({
                     <div className="flex items-center space-x-6">
                         <button className="relative p-3 text-zinc-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all">
                             <Bell className="h-5 w-5" />
-                            <span className="absolute top-3 right-3 h-2 w-2 bg-primary rounded-full ring-4 ring-[#09090b]"></span>
+                            <span className="absolute top-3 right-3 h-2 w-2 bg-primary rounded-full ring-4 ring-zinc-900"></span>
                         </button>
                         <div className="h-10 w-px bg-white/5"></div>
                         <Button className="rounded-2xl bg-zinc-100 text-zinc-950 hover:bg-white font-black px-6 h-12 shadow-[0_10px_20px_rgba(255,255,255,0.05)] transition-all active:scale-95">
