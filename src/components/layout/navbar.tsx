@@ -39,8 +39,8 @@ export function Navbar() {
             <div className="container mx-auto px-4 md:px-6">
                 <div className="flex items-center justify-between">
                     <Link href="/" className="flex items-center space-x-2">
-                        <span className="text-2xl font-bold tracking-tighter text-blue-700 dark:text-blue-400">
-                            MED<span className="text-slate-900 dark:text-white">DOC</span>
+                        <span className="text-2xl font-bold tracking-tighter text-primary">
+                            MED<span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">DOC</span>
                         </span>
                     </Link>
 
