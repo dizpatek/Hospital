@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model ExpertiseArea {
+  id                  String              @id @default(cuid())
+  name                String
+  slug                String              @unique
+  description         String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  treatmentCategories TreatmentCategory[]
+}
+
+model TreatmentCategory {
+  id              String        @id @default(cuid())
+  name            String
+  slug            String        @unique
+  description     String?
+  expertiseAreaId String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  procedures      Procedure[]
+  expertiseArea   ExpertiseArea @relation(fields: [expertiseAreaId], references: [id])
+}
+
+model Procedure {
+  id                  String             @id @default(cuid())
+  name                String
+  slug                String             @unique
+  icon                String
+  summary             String
+  why                 String?
+  how                 String?
+  sideEffects         String?
+  faq                 String?
+  status              String             @default("DRAFT")
+  treatmentCategoryId String?
+  seoTitle            String?
+  seoDesc             String?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  imageUrl            String?
+  method              String?
+  treatmentCategory   TreatmentCategory? @relation(fields: [treatmentCategoryId], references: [id])
+}
+
+model AppointmentRequest {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String
+  message     String?
+  isContacted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  posts     BlogPost[]
+}
+
+model BlogPost {
+  id         String   @id @default(cuid())
+  title      String
+  slug       String   @unique
+  excerpt    String
+  content    String
+  coverImage String
+  status     String   @default("DRAFT")
+  categoryId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  category   Category @relation(fields: [categoryId], references: [id])
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  isGlobal  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
