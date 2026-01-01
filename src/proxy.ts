@@ -6,7 +6,7 @@ const JWT_SECRET = new TextEncoder().encode(
     process.env.NEXTAUTH_SECRET || "fallback-secret-key-change-in-production"
 );
 
-export async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Protect admin routes
@@ -41,4 +41,3 @@ export async function middleware(request: NextRequest) {
 export const config = {
     matcher: ["/admin/:path*"],
 };
-
