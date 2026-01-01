@@ -61,7 +61,10 @@ export default function LoginForm() {
         },
     });
 
-    async function runDiagnostics() {
+    async function runDiagnostics(e: React.MouseEvent) {
+        e.preventDefault(); // Stop any form submission or page reload
+        e.stopPropagation();
+
         setDiagLoading(true);
         setDiagResult("Running tests...");
         const values = form.getValues();
@@ -74,8 +77,17 @@ export default function LoginForm() {
             });
             const data = await res.json();
             setDiagResult(JSON.stringify(data, null, 2));
+
+            // Critical: If success, show a persistent alert so the user can see it even if page reloads
+            if (!data.success) {
+                alert("Diagnostic Error: " + data.message);
+            } else {
+                alert("Diagnostic Success! Database connection is GOOD.");
+            }
+
         } catch (e: any) {
             setDiagResult("Error: " + e.message);
+            alert("Network Error: " + e.message);
         } finally {
             setDiagLoading(false);
         }
