@@ -44,7 +44,14 @@ const formSchema = z.object({
 export default function LoginForm() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [debugLog, setDebugLog] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
+
+    // Diagnostics State
+    const [diagLoading, setDiagLoading] = useState(false);
+    const [diagResult, setDiagResult] = useState<string | null>(null);
+
+    const addLog = (msg: string) => setDebugLog(prev => [...prev, `${new Date().toLocaleTimeString()}: ${msg}`]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -54,36 +61,60 @@ export default function LoginForm() {
         },
     });
 
+    async function runDiagnostics() {
+        setDiagLoading(true);
+        setDiagResult("Running tests...");
+        const values = form.getValues();
+
+        try {
+            const res = await fetch("/api/verify-credentials", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
+            });
+            const data = await res.json();
+            setDiagResult(JSON.stringify(data, null, 2));
+        } catch (e: any) {
+            setDiagResult("Error: " + e.message);
+        } finally {
+            setDiagLoading(false);
+        }
+    }
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("Submit triggered", values);
+        addLog("Submit triggered");
         setIsLoading(true);
         setError(null);
 
         try {
-            console.log("Calling signIn...");
+            addLog("Calling signIn...");
+            // Use redirect: false to handle it manually
             const result = await signIn("credentials", {
                 email: values.email,
                 password: values.password,
                 redirect: false,
             });
-            console.log("signIn result:", result);
+
+            addLog(`SignIn Result: ${JSON.stringify(result)}`);
 
             setIsLoading(false);
 
             if (result?.error) {
-                console.error("Login Error:", result.error);
+                addLog("Login Error: " + result.error);
                 setError("Geçersiz e-posta veya şifre.");
-                import("sonner").then(({ toast }) => toast.error("Giriş Başarısız: " + result.error));
+                import("sonner").then(({ toast }) => toast.error("Hata: " + result.error));
             } else if (result?.ok) {
-                import("sonner").then(({ toast }) => toast.success("Giriş başarılı! Yönlendiriliyorsunuz..."));
-                // Force a hard redirect to ensure cookies are properly updated for the server session
+                addLog("Login Success! Redirecting...");
+                import("sonner").then(({ toast }) => toast.success("Giriş başarılı!"));
+                // Hard redirect
                 window.location.href = "/admin/dashboard";
+            } else {
+                addLog("Unknown result state");
             }
         } catch (err: any) {
-            console.error("Critical Login Error:", err);
+            addLog("Critical Exception: " + err.message);
             setIsLoading(false);
-            setError("Bir hata oluştu. Lütfen tekrar deneyin.");
-            import("sonner").then(({ toast }) => toast.error("Sistem Hatası: " + err.message));
+            setError("Sistem hatası oluştu.");
         }
     }
 
@@ -97,37 +128,58 @@ export default function LoginForm() {
                             id="email"
                             placeholder="name@example.com"
                             type="email"
-                            autoCapitalize="none"
-                            autoComplete="email"
-                            autoCorrect="off"
                             disabled={isLoading}
                             {...form.register("email")}
                         />
-                        {form.formState.errors.email && (
-                            <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
-                        )}
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="password">Password</Label>
                         <Input
                             id="password"
-                            placeholder="Password"
                             type="password"
-                            autoComplete="current-password"
                             disabled={isLoading}
                             {...form.register("password")}
                         />
-                        {form.formState.errors.password && (
-                            <p className="text-sm text-red-500">{form.formState.errors.password.message}</p>
-                        )}
                     </div>
-                    {error && <p className="text-sm text-red-500">{error}</p>}
+                    {error && <p className="text-sm text-red-500 font-bold">{error}</p>}
+
                     <Button disabled={isLoading}>
                         {isLoading && <Spinner />}
-                        Sign In with Email
+                        Giriş Yap
                     </Button>
                 </div>
             </form>
+
+            {/* Diagnostics Section */}
+            <div className="mt-8 p-4 bg-zinc-900 rounded-lg text-xs font-mono text-zinc-400 border border-zinc-700">
+                <p className="font-bold text-white mb-2">--- CANLI TANI ARACI ---</p>
+                <div className="mb-4 space-x-2">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={runDiagnostics}
+                        disabled={diagLoading}
+                        className="h-8"
+                    >
+                        {diagLoading ? "Kontrol Ediliyor..." : "Bağlantıyı & Şifreyi Test Et"}
+                    </Button>
+                </div>
+
+                {diagResult && (
+                    <div className="mb-4 p-2 bg-black rounded border border-zinc-800 overflow-auto max-h-40 whitespace-pre-wrap">
+                        {diagResult}
+                    </div>
+                )}
+
+                <div className="mt-2 pt-2 border-t border-zinc-800">
+                    <p className="mb-1 text-zinc-500">İşlem Günlüğü:</p>
+                    {debugLog.map((log, i) => (
+                        <div key={i} className="text-zinc-300 border-b border-zinc-800/50 pb-1 mb-1">{log}</div>
+                    ))}
+                    {debugLog.length === 0 && <span className="text-zinc-600">Henüz işlem yok...</span>}
+                </div>
+            </div>
         </div>
     );
 }
