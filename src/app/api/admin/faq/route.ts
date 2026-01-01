@@ -11,7 +11,7 @@ export async function GET() {
     try {
         const faqs = await prisma.fAQ.findMany({
             orderBy: {
-                order: "asc",
+                createdAt: "desc",
             },
         });
 
@@ -43,7 +43,6 @@ export async function POST(req: Request) {
                 question: data.question,
                 answer: data.answer,
                 isGlobal: data.isGlobal ?? true,
-                order: data.order ?? 0,
             },
         });
 
