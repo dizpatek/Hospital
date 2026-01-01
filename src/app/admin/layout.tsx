@@ -149,8 +149,10 @@ export default async function AdminLayout({
                             <span className="absolute top-3 right-3 h-2 w-2 bg-primary rounded-full ring-4 ring-zinc-900"></span>
                         </button>
                         <div className="h-10 w-px bg-white/5"></div>
-                        <Button className="rounded-2xl bg-zinc-100 text-zinc-950 hover:bg-white font-black px-6 h-12 shadow-[0_10px_20px_rgba(255,255,255,0.05)] transition-all active:scale-95">
-                            Destek Al
+                        <Button asChild className="rounded-2xl bg-zinc-100 text-zinc-950 hover:bg-white font-black px-6 h-12 shadow-[0_10px_20px_rgba(255,255,255,0.05)] transition-all active:scale-95">
+                            <a href="https://wa.me/905382244488" target="_blank" rel="noopener noreferrer">
+                                Destek Al
+                            </a>
                         </Button>
                     </div>
                 </header>
