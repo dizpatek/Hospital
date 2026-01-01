@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "conf-wiz": "node scripts/conf-wiz.js",
-    "deploy-vercel": "node scripts/deploy-vercel.js"
+    "deploy-vercel": "node scripts/deploy-vercel.js",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
