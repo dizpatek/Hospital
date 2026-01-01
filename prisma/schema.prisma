@@ -168,6 +168,8 @@ model SiteSettings {
   metaDescription   String?
   metaKeywords      String?
   googleAnalyticsId String?
+  seedData          String?
+  seedVersion       Int      @default(1)
   updatedAt         DateTime @updatedAt
 }
 

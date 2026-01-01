@@ -9,7 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Settings, Palette, User, Globe, Mail, Code } from "lucide-react";
+import { Settings, Palette, User, Globe, Mail, Code, Database } from "lucide-react";
+import Editor from "@monaco-editor/react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 const passwordSchema = z.object({
@@ -51,6 +53,10 @@ export default function SettingsPage() {
     const [settings, setSettings] = useState<any>(null);
     const [scriptLoading, setScriptLoading] = useState<string | null>(null);
     const [scriptResult, setScriptResult] = useState<{ script: string; success: boolean; output: string } | null>(null);
+    const [seedData, setSeedData] = useState<string>('');
+    const [seedVersion, setSeedVersion] = useState<number>(1);
+    const [seedLoading, setSeedLoading] = useState(false);
+    const [applyDialogOpen, setApplyDialogOpen] = useState(false);
 
     const passwordForm = useForm({
         resolver: zodResolver(passwordSchema),
@@ -103,6 +109,22 @@ export default function SettingsPage() {
             }
         };
         fetchSettings();
+    }, []);
+
+    useEffect(() => {
+        const fetchSeedData = async () => {
+            try {
+                const res = await fetch('/api/admin/seed');
+                const result = await res.json();
+                if (result.success) {
+                    setSeedData(result.data.seedData);
+                    setSeedVersion(result.data.version);
+                }
+            } catch (error) {
+                console.error('Failed to fetch seed data:', error);
+            }
+        };
+        fetchSeedData();
     }, []);
 
     const onPasswordSubmit = async (data: z.infer<typeof passwordSchema>) => {
@@ -231,6 +253,63 @@ export default function SettingsPage() {
         }
     };
 
+    const saveSeedData = async () => {
+        setSeedLoading(true);
+        try {
+            const res = await fetch("/api/admin/seed", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ seedData }),
+            });
+
+            const result = await res.json();
+
+            if (result.success) {
+                toast.success("Seed data saved successfully");
+                setSeedVersion(result.version);
+            } else {
+                toast.error("Failed to save seed data");
+            }
+        } catch (error) {
+            toast.error("Failed to save seed data");
+        } finally {
+            setSeedLoading(false);
+        }
+    };
+
+    const applySeedData = async () => {
+        setSeedLoading(true);
+        try {
+            const res = await fetch("/api/admin/seed/apply", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ confirm: true }),
+            });
+
+            const result = await res.json();
+
+            if (result.success) {
+                toast.success("Seed data applied successfully");
+                setApplyDialogOpen(false);
+            } else {
+                toast.error("Failed to apply seed data");
+            }
+        } catch (error) {
+            toast.error("Failed to apply seed data");
+        } finally {
+            setSeedLoading(false);
+        }
+    };
+
+    const validateJson = () => {
+        try {
+            JSON.parse(seedData);
+            toast.success("JSON is valid");
+        } catch (e) {
+            toast.error("Invalid JSON");
+        }
+    };
+
     return (
         <div className="space-y-8">
             <div>
@@ -263,6 +342,10 @@ export default function SettingsPage() {
                     <TabsTrigger value="scripts" className="data-[state=active]:bg-primary">
                         <Code className="w-4 h-4 mr-2" />
                         Scripts
+                    </TabsTrigger>
+                    <TabsTrigger value="seed" className="data-[state=active]:bg-primary">
+                        <Database className="w-4 h-4 mr-2" />
+                        Seed
                     </TabsTrigger>
                 </TabsList>
 
@@ -535,6 +618,63 @@ export default function SettingsPage() {
                                     </pre>
                                 </div>
                             )}
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="seed" className="space-y-6">
+                    <Card className="bg-zinc-900 border-white/5">
+                        <CardHeader>
+                            <CardTitle>Seed Data Editor</CardTitle>
+                            <CardDescription>Edit and apply seed data for the system. Version: {seedVersion}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="h-96">
+                                <Editor
+                                    height="100%"
+                                    language="json"
+                                    value={seedData}
+                                    onChange={(value) => setSeedData(value || '')}
+                                    theme="vs-dark"
+                                    options={{
+                                        minimap: { enabled: false },
+                                        fontSize: 14,
+                                        wordWrap: 'on'
+                                    }}
+                                />
+                            </div>
+                            <div className="flex gap-2 flex-wrap">
+                                <Button onClick={saveSeedData} disabled={seedLoading}>
+                                    {seedLoading ? "Saving..." : "Save Draft"}
+                                </Button>
+                                <Button onClick={validateJson} variant="outline">
+                                    Validate JSON
+                                </Button>
+                                <Dialog open={applyDialogOpen} onOpenChange={setApplyDialogOpen}>
+                                    <DialogTrigger asChild>
+                                        <Button variant="destructive">
+                                            Apply Seed
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle>Apply Seed Data</DialogTitle>
+                                            <DialogDescription>
+                                                This will overwrite existing seed data in the database. This action cannot be undone.
+                                                Are you sure you want to proceed?
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <DialogFooter>
+                                            <Button variant="outline" onClick={() => setApplyDialogOpen(false)}>
+                                                Cancel
+                                            </Button>
+                                            <Button variant="destructive" onClick={applySeedData} disabled={seedLoading}>
+                                                {seedLoading ? "Applying..." : "Apply"}
+                                            </Button>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
                         </CardContent>
                     </Card>
                 </TabsContent>
