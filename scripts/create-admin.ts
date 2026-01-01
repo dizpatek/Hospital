@@ -2,9 +2,7 @@ import { PrismaClient, Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import "dotenv/config";
 
-const prisma = new PrismaClient({
-    accelerateUrl: process.env.DATABASE_URL
-} as any);
+const prisma = new PrismaClient();
 
 async function main() {
     const email = "admin@meddoc.com";
