@@ -11,8 +11,6 @@ export const authOptions: NextAuthOptions = {
     session: {
         strategy: "jwt",
     },
-    debug: true, // Enable debug messages in console
-    trustHost: true, // Trust the host header, critical for Vercel
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
         signIn: "/auth/login",
