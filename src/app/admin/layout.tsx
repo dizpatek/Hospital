@@ -9,7 +9,6 @@ import {
     PenTool,
     Home,
     ChevronRight,
-    LogOut,
     User,
     Settings,
     Bell,
@@ -17,6 +16,7 @@ import {
     HelpCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LogoutButton } from "@/components/admin/logout-button";
 
 export default async function AdminLayout({
     children,
@@ -108,9 +108,7 @@ export default async function AdminLayout({
                             <p className="text-sm font-black text-white truncate">Admin</p>
                             <p className="text-[10px] text-zinc-500 truncate font-medium">{session.user.email}</p>
                         </div>
-                        <button className="p-2 text-zinc-500 hover:text-red-500 transition-colors">
-                            <LogOut className="h-5 w-5" />
-                        </button>
+                        <LogoutButton />
                     </div>
                 </div>
             </aside>
