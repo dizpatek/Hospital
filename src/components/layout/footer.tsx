@@ -33,7 +33,7 @@ export function Footer() {
                             {settings.siteName || "MEDDOC"}
                         </Link>
                         <p className="text-muted-foreground text-sm leading-relaxed font-medium">
-                            {settings.siteDescription || "Üroloji ve Androlojide Mükemmeliyet. Yetişkin ve pediatrik hastalar için profesyonel, şefkatli ve ileri düzey tıbbi bakım sağlıyoruz. En modern cerrahi tekniklerle yaşam kalitenizi artırıyoruz."}
+                            MEDDOC<span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800"> Poliklinik Hizmeti</span>
                         </p>
                         <div className="flex space-x-4">
                             {[
