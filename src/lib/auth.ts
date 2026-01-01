@@ -12,6 +12,7 @@ export const authOptions: NextAuthOptions = {
         strategy: "jwt",
     },
     debug: true, // Enable debug messages in console
+    trustHost: true, // Trust the host header, critical for Vercel
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
         signIn: "/auth/login",
@@ -88,17 +89,6 @@ export const authOptions: NextAuthOptions = {
                 token.role = user.role;
             }
             return token;
-        },
-    },
-    cookies: {
-        sessionToken: {
-            name: `${process.env.NODE_ENV === "production" ? "__Secure-" : ""}next-auth.session-token`,
-            options: {
-                httpOnly: true,
-                sameSite: "lax",
-                path: "/",
-                secure: process.env.NODE_ENV === "production",
-            },
         },
     },
 };
