@@ -7,10 +7,11 @@ const JWT_SECRET = new TextEncoder().encode(
     process.env.NEXTAUTH_SECRET || "fallback-secret-key-change-in-production"
 );
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const treatment = await prisma.treatmentCategory.findUnique({
-            where: { id: params.id },
+            where: { id },
             include: { expertiseArea: true },
         });
 
@@ -30,8 +31,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const cookieStore = await cookies();
         const token = cookieStore.get("auth-token")?.value;
 
@@ -44,7 +46,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         const data = await req.json();
 
         const treatment = await prisma.treatmentCategory.update({
-            where: { id: params.id },
+            where: { id },
             data: {
                 name: data.name,
                 slug: data.slug,
@@ -65,8 +67,9 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const cookieStore = await cookies();
         const token = cookieStore.get("auth-token")?.value;
 
@@ -77,7 +80,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
         await jwtVerify(token, JWT_SECRET);
 
         await prisma.treatmentCategory.delete({
-            where: { id: params.id },
+            where: { id },
         });
 
         return NextResponse.json({

@@ -7,10 +7,11 @@ const JWT_SECRET = new TextEncoder().encode(
     process.env.NEXTAUTH_SECRET || "fallback-secret-key-change-in-production"
 );
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const faq = await prisma.fAQ.findUnique({
-            where: { id: params.id },
+            where: { id },
         });
 
         if (!faq) {
@@ -29,8 +30,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const cookieStore = await cookies();
         const token = cookieStore.get("auth-token")?.value;
 
@@ -43,7 +45,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         const data = await req.json();
 
         const faq = await prisma.fAQ.update({
-            where: { id: params.id },
+            where: { id },
             data: {
                 question: data.question,
                 answer: data.answer,
@@ -64,8 +66,9 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const cookieStore = await cookies();
         const token = cookieStore.get("auth-token")?.value;
 
@@ -76,7 +79,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
         await jwtVerify(token, JWT_SECRET);
 
         await prisma.fAQ.delete({
-            where: { id: params.id },
+            where: { id },
         });
 
         return NextResponse.json({

@@ -7,10 +7,11 @@ const JWT_SECRET = new TextEncoder().encode(
     process.env.NEXTAUTH_SECRET || "fallback-secret-key-change-in-production"
 );
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const post = await prisma.blogPost.findUnique({
-            where: { id: params.id },
+            where: { id },
             include: { category: true },
         });
 
@@ -30,8 +31,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const cookieStore = await cookies();
         const token = cookieStore.get("auth-token")?.value;
 
@@ -44,7 +46,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         const data = await req.json();
 
         const post = await prisma.blogPost.update({
-            where: { id: params.id },
+            where: { id },
             data: {
                 title: data.title,
                 slug: data.slug,
@@ -69,8 +71,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params;
         const cookieStore = await cookies();
         const token = cookieStore.get("auth-token")?.value;
 
@@ -81,7 +84,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
         await jwtVerify(token, JWT_SECRET);
 
         await prisma.blogPost.delete({
-            where: { id: params.id },
+            where: { id },
         });
 
         return NextResponse.json({
