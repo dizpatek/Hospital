@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/admin/logout-button";
+import AdminHeader from "@/components/admin/admin-header";
 
 const JWT_SECRET = new TextEncoder().encode(
     process.env.NEXTAUTH_SECRET || "fallback-secret-key-change-in-production"
@@ -135,29 +136,7 @@ export default async function AdminLayout({
 
             {/* Main Content Area */}
             <div className="flex-1 lg:ml-80 flex flex-col min-h-screen">
-                {/* Header */}
-                <header className="h-24 sticky top-0 z-40 bg-zinc-900/80 backdrop-blur-2xl border-b border-white/5 px-10 flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
-                            <span className="hover:text-primary cursor-pointer transition-colors">Admin</span>
-                            <ChevronRight className="h-3 w-3" />
-                            <span className="text-white">Panel</span>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center space-x-6">
-                        <button className="relative p-3 text-zinc-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all">
-                            <Bell className="h-5 w-5" />
-                            <span className="absolute top-3 right-3 h-2 w-2 bg-primary rounded-full ring-4 ring-zinc-900"></span>
-                        </button>
-                        <div className="h-10 w-px bg-white/5"></div>
-                        <Button asChild className="rounded-2xl bg-zinc-100 text-zinc-950 hover:bg-white font-black px-6 h-12 shadow-[0_10px_20px_rgba(255,255,255,0.05)] transition-all active:scale-95">
-                            <a href="https://wa.me/905382244488" target="_blank" rel="noopener noreferrer">
-                                Destek Al
-                            </a>
-                        </Button>
-                    </div>
-                </header>
+                <AdminHeader />
 
                 <main className="flex-1 p-10 overflow-x-hidden">
                     <div className="max-w-[1600px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
