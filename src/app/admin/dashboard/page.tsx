@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
     ScrollText,
@@ -11,31 +14,64 @@ import {
     CheckCircle2,
     Clock,
     Phone,
-    ChevronRight
+    ChevronRight,
+    ExternalLink
 } from "lucide-react";
-import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-export default async function DashboardPage() {
-    const [procCount, blogCount, catCount, requests] = await Promise.all([
-        prisma.procedure.count(),
-        prisma.blogPost.count(),
-        prisma.treatmentCategory.count(),
-        prisma.appointmentRequest.findMany({
-            take: 5,
-            orderBy: { createdAt: "desc" }
-        })
-    ]);
+export default function DashboardPage() {
+    const [stats, setStats] = useState({
+        procedures: 0,
+        blogs: 0,
+        categories: 0,
+        appointments: 0
+    });
+    const [requests, setRequests] = useState<any[]>([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
 
-    const stats = [
-        { title: "Aktif Prosedür", value: procCount, icon: Activity, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20" },
-        { title: "Blog İçeriği", value: blogCount, icon: ScrollText, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20" },
-        { title: "Kategoriler", value: catCount, icon: Layers, color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
-        { title: "Randevu Talebi", value: requests.length, icon: MessageSquare, color: "text-purple-500", bg: "bg-purple-500/10", border: "border-purple-500/20" },
+    useEffect(() => {
+        // Fetch dashboard data
+        fetch('/api/admin/dashboard')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    setStats(data.stats);
+                    setRequests(data.requests);
+                }
+            })
+            .catch(err => console.error('Dashboard fetch error:', err));
+    }, []);
+
+    useEffect(() => {
+        if (searchQuery.length >= 2) {
+            setIsSearching(true);
+            fetch(`/api/admin/search?q=${encodeURIComponent(searchQuery)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        setSearchResults(data.results);
+                    }
+                    setIsSearching(false);
+                })
+                .catch(err => {
+                    console.error('Search error:', err);
+                    setIsSearching(false);
+                });
+        } else {
+            setSearchResults([]);
+        }
+    }, [searchQuery]);
+
+    const statsData = [
+        { title: "Aktif Prosedür", value: stats.procedures, icon: Activity, color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20" },
+        { title: "Blog İçeriği", value: stats.blogs, icon: ScrollText, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20" },
+        { title: "Kategoriler", value: stats.categories, icon: Layers, color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
+        { title: "Randevu Talebi", value: stats.appointments, icon: MessageSquare, color: "text-purple-500", bg: "bg-purple-500/10", border: "border-purple-500/20" },
     ];
-
     return (
         <div className="space-y-10 pb-10">
             {/* Header section */}
@@ -56,7 +92,7 @@ export default async function DashboardPage() {
 
             {/* Stats Grid */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                {stats.map((stat) => (
+                {statsData.map((stat) => (
                     <Card key={stat.title} className={`border ${stat.border} shadow-2xl bg-zinc-900/50 backdrop-blur-xl rounded-[2.5rem] overflow-hidden group hover:scale-[1.02] transition-all duration-300`}>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">{stat.title}</CardTitle>
@@ -128,17 +164,6 @@ export default async function DashboardPage() {
                         </CardContent>
                     </Card>
 
-                    {/* Quick Search */}
-                    <div className="relative group">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-[2.5rem] blur opacity-0 group-hover:opacity-100 transition duration-1000"></div>
-                        <div className="relative flex items-center">
-                            <Search className="absolute left-6 h-6 w-6 text-muted-foreground" />
-                            <input
-                                className="w-full h-20 bg-zinc-900/60 border border-border/50 rounded-[2rem] pl-16 pr-8 text-lg font-bold text-white placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all backdrop-blur-xl"
-                                placeholder="Prosedür veya blog içeriği ara..."
-                            />
-                        </div>
-                    </div>
                 </div>
 
                 {/* Right Sidebar */}
@@ -164,6 +189,62 @@ export default async function DashboardPage() {
                                     <Layers className="mr-3 h-5 w-5 text-emerald-500" /> Kategori Düzenle
                                 </Link>
                             </Button>
+                        </CardContent>
+                    </Card>
+
+                    {/* Quick Search */}
+                    <Card className="border border-border/50 shadow-2xl bg-zinc-900/40 backdrop-blur-xl rounded-[3rem] overflow-hidden">
+                        <CardHeader className="p-8">
+                            <CardTitle className="text-xl font-black">Hızlı Arama</CardTitle>
+                            <CardDescription>İçeriklerinizde arama yapın</CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-8 pt-0 space-y-4">
+                            <div className="relative">
+                                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                <input
+                                    type="text"
+                                    placeholder="Prosedür veya blog ara..."
+                                    className="w-full h-12 bg-zinc-800/50 border border-border/50 rounded-2xl pl-12 pr-4 text-sm font-medium text-white placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Search Results */}
+                            {searchResults.length > 0 && (
+                                <div className="space-y-2 max-h-60 overflow-y-auto">
+                                    {searchResults.map((result, index) => (
+                                        <Link key={index} href={result.url}>
+                                            <div className="p-3 bg-zinc-800/30 rounded-xl hover:bg-zinc-800/50 transition-colors cursor-pointer">
+                                                <div className="flex items-center gap-2">
+                                                    {result.type === 'procedure' ? (
+                                                        <Activity className="h-4 w-4 text-blue-500" />
+                                                    ) : (
+                                                        <ScrollText className="h-4 w-4 text-amber-500" />
+                                                    )}
+                                                    <span className="text-sm font-bold text-white capitalize">{result.type}</span>
+                                                </div>
+                                                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                                                    {result.name || result.title}
+                                                </p>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+
+                            {isSearching && (
+                                <div className="text-center py-4">
+                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+                                    <p className="text-xs text-muted-foreground mt-2">Aranıyor...</p>
+                                </div>
+                            )}
+
+                            {searchQuery.length >= 2 && searchResults.length === 0 && !isSearching && (
+                                <p className="text-sm text-muted-foreground text-center py-4">
+                                    Sonuç bulunamadı
+                                </p>
+                            )}
                         </CardContent>
                     </Card>
 
