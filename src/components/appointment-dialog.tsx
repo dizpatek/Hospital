@@ -59,7 +59,7 @@ export function AppointmentDialog({ children }: AppointmentDialogProps) {
                 phone: values.phone,
                 message: values.message,
             };
-            
+
             const result = await createAppointmentRequest(appointmentData);
             if (result.success) {
                 toast.success(result.message);
@@ -80,10 +80,10 @@ export function AppointmentDialog({ children }: AppointmentDialogProps) {
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] rounded-[2rem] bg-white dark:bg-zinc-950 border-slate-200 dark:border-zinc-800">
+            <DialogContent className="sm:max-w-[500px] rounded-[2rem] bg-background border-slate-200 dark:border-zinc-800 premium:border-zinc-800">
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">Randevu Al</DialogTitle>
-                    <DialogDescription className="text-slate-500 dark:text-slate-400">
+                    <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white premium:text-white">Randevu Al</DialogTitle>
+                    <DialogDescription className="text-slate-500 dark:text-slate-400 premium:text-slate-400">
                         Bilgilerinizi bırakın, uzman ekibimiz size en kısa sürede dönüş yapsın.
                     </DialogDescription>
                 </DialogHeader>
@@ -94,9 +94,9 @@ export function AppointmentDialog({ children }: AppointmentDialogProps) {
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-slate-700 dark:text-slate-300 font-semibold">Ad Soyad</FormLabel>
+                                    <FormLabel className="text-slate-700 dark:text-slate-300 premium:text-slate-300 font-semibold">Ad Soyad</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Adınızı ve soyadınızı giriniz" className="rounded-xl h-12 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800" {...field} />
+                                        <Input placeholder="Adınızı ve soyadınızı giriniz" className="rounded-xl h-12 bg-slate-50 dark:bg-zinc-900 premium:bg-zinc-900 border-slate-200 dark:border-zinc-800 premium:border-zinc-800" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -107,9 +107,9 @@ export function AppointmentDialog({ children }: AppointmentDialogProps) {
                             name="phone"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-slate-700 dark:text-slate-300 font-semibold">Telefon</FormLabel>
+                                    <FormLabel className="text-slate-700 dark:text-slate-300 premium:text-slate-300 font-semibold">Telefon</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="05XX XXX XX XX" className="rounded-xl h-12 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800" {...field} />
+                                        <Input placeholder="05XX XXX XX XX" className="rounded-xl h-12 bg-slate-50 dark:bg-zinc-900 premium:bg-zinc-900 border-slate-200 dark:border-zinc-800 premium:border-zinc-800" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -121,9 +121,9 @@ export function AppointmentDialog({ children }: AppointmentDialogProps) {
                             name="message"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-slate-700 dark:text-slate-300 font-semibold">Notunuz</FormLabel>
+                                    <FormLabel className="text-slate-700 dark:text-slate-300 premium:text-slate-300 font-semibold">Notunuz</FormLabel>
                                     <FormControl>
-                                        <Textarea placeholder="Eklemek istediğiniz bilgileri buraya yazabilirsiniz." className="rounded-xl min-h-[100px] bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800" {...field} />
+                                        <Textarea placeholder="Eklemek istediğiniz bilgileri buraya yazabilirsiniz." className="rounded-xl min-h-[100px] bg-slate-50 dark:bg-zinc-900 premium:bg-zinc-900 border-slate-200 dark:border-zinc-800 premium:border-zinc-800" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

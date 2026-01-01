@@ -164,6 +164,62 @@ export default function DashboardPage() {
                         </CardContent>
                     </Card>
 
+                    {/* Quick Search - Moved under Recent Requests */}
+                    <Card className="border border-border/50 shadow-2xl bg-zinc-900/40 backdrop-blur-xl rounded-[3rem] overflow-hidden">
+                        <CardHeader className="p-8">
+                            <CardTitle className="text-xl font-black">Hızlı Arama</CardTitle>
+                            <CardDescription>İçeriklerinizde arama yapın</CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-8 pt-0 space-y-4">
+                            <div className="relative">
+                                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                <input
+                                    type="text"
+                                    placeholder="Prosedür veya blog ara..."
+                                    className="w-full h-12 bg-zinc-800/50 border border-border/50 rounded-2xl pl-12 pr-4 text-sm font-medium text-white placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Search Results */}
+                            {searchResults.length > 0 && (
+                                <div className="space-y-2 max-h-60 overflow-y-auto">
+                                    {searchResults.map((result, index) => (
+                                        <Link key={index} href={result.url}>
+                                            <div className="p-3 bg-zinc-800/30 rounded-xl hover:bg-zinc-800/50 transition-colors cursor-pointer">
+                                                <div className="flex items-center gap-2">
+                                                    {result.type === 'procedure' ? (
+                                                        <Activity className="h-4 w-4 text-blue-500" />
+                                                    ) : (
+                                                        <ScrollText className="h-4 w-4 text-amber-500" />
+                                                    )}
+                                                    <span className="text-sm font-bold text-white capitalize">{result.type}</span>
+                                                </div>
+                                                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                                                    {result.name || result.title}
+                                                </p>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+
+                            {isSearching && (
+                                <div className="text-center py-4">
+                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+                                    <p className="text-xs text-muted-foreground mt-2">Aranıyor...</p>
+                                </div>
+                            )}
+
+                            {searchQuery.length >= 2 && searchResults.length === 0 && !isSearching && (
+                                <p className="text-sm text-muted-foreground text-center py-4">
+                                    Sonuç bulunamadı
+                                </p>
+                            )}
+                        </CardContent>
+                    </Card>
+
                 </div>
 
                 {/* Right Sidebar */}
@@ -192,7 +248,7 @@ export default function DashboardPage() {
                         </CardContent>
                     </Card>
 
-                    {/* Quick Search */}
+                    {/* Quick Search - Moved under Recent Requests */}
                     <Card className="border border-border/50 shadow-2xl bg-zinc-900/40 backdrop-blur-xl rounded-[3rem] overflow-hidden">
                         <CardHeader className="p-8">
                             <CardTitle className="text-xl font-black">Hızlı Arama</CardTitle>
