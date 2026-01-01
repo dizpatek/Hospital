@@ -91,28 +91,30 @@ export default async function DashboardPage() {
                             {requests.length > 0 ? (
                                 <div className="divide-y divide-border/50">
                                     {requests.map((req: any) => (
-                                        <div key={req.id} className="p-6 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer group">
-                                            <div className="flex items-center gap-4">
-                                                <div className="h-12 w-12 rounded-2xl bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:bg-primary/20 group-hover:text-primary transition-colors">
-                                                    <Users className="h-6 w-6" />
-                                                </div>
-                                                <div>
-                                                    <p className="font-black text-white">{req.name}</p>
-                                                    <div className="flex items-center gap-3 text-xs text-muted-foreground font-medium mt-1">
-                                                        <span className="flex items-center"><Phone className="h-3 w-3 mr-1" /> {req.phone}</span>
-                                                        <span className="flex items-center"><Clock className="h-3 w-3 mr-1" /> {new Date(req.createdAt).toLocaleDateString('tr-TR')}</span>
+                                        <Link key={req.id} href={`/admin/appointments/${req.id}`}>
+                                            <div className="p-6 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer group">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="h-12 w-12 rounded-2xl bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:bg-primary/20 group-hover:text-primary transition-colors">
+                                                        <Users className="h-6 w-6" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-black text-white">{req.name}</p>
+                                                        <div className="flex items-center gap-3 text-xs text-muted-foreground font-medium mt-1">
+                                                            <span className="flex items-center"><Phone className="h-3 w-3 mr-1" /> {req.phone}</span>
+                                                            <span className="flex items-center"><Clock className="h-3 w-3 mr-1" /> {new Date(req.createdAt).toLocaleDateString('tr-TR')}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                <div className="flex items-center gap-3">
+                                                    {req.isContacted ? (
+                                                        <Badge className="bg-emerald-500/10 text-emerald-500 border-none rounded-lg px-3 py-1 font-bold">Arandı</Badge>
+                                                    ) : (
+                                                        <Badge className="bg-primary/10 text-primary border-none rounded-lg px-3 py-1 font-bold">Bekliyor</Badge>
+                                                    )}
+                                                    <ChevronRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0" />
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-3">
-                                                {req.isContacted ? (
-                                                    <Badge className="bg-emerald-500/10 text-emerald-500 border-none rounded-lg px-3 py-1 font-bold">Arandı</Badge>
-                                                ) : (
-                                                    <Badge className="bg-primary/10 text-primary border-none rounded-lg px-3 py-1 font-bold">Bekliyor</Badge>
-                                                )}
-                                                <ChevronRight className="h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0" />
-                                            </div>
-                                        </div>
+                                        </Link>
                                     ))}
                                 </div>
                             ) : (

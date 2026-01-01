@@ -13,7 +13,8 @@ import {
     Settings,
     Bell,
     ExternalLink,
-    HelpCircle
+    HelpCircle,
+    MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/admin/logout-button";
@@ -49,6 +50,7 @@ export default async function AdminLayout({
 
     const menuItems = [
         { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+        { name: "Randevu Talepleri", href: "/admin/appointments", icon: MessageSquare },
         { name: "Prosedürler", href: "/admin/procedures", icon: Stethoscope },
         { name: "Tedaviler", href: "/admin/treatments", icon: Layers },
         { name: "Blog Yönetimi", href: "/admin/blog", icon: PenTool },
