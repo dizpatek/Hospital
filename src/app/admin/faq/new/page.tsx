@@ -9,17 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
-import { Checkbox } from "@/components/ui/checkbox";
 
 const faqSchema = z.object({
     question: z.string().min(1, "Soru gerekli"),
     answer: z.string().min(1, "Cevap gerekli"),
     isGlobal: z.boolean().default(true),
-    order: z.number().default(0),
 });
 
 export default function NewFAQPage() {
@@ -31,7 +28,6 @@ export default function NewFAQPage() {
         resolver: zodResolver(faqSchema),
         defaultValues: {
             isGlobal: true,
-            order: 0,
         },
     });
 
@@ -105,25 +101,16 @@ export default function NewFAQPage() {
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="order">Sıra</Label>
-                            <Input
-                                id="order"
-                                type="number"
-                                {...form.register("order", { valueAsNumber: true })}
-                                placeholder="0"
-                            />
-                            <p className="text-xs text-zinc-500">Küçük sayılar önce gösterilir</p>
-                        </div>
-
                         <div className="flex items-center space-x-2">
-                            <Checkbox
+                            <input
+                                type="checkbox"
                                 id="isGlobal"
                                 checked={isGlobal}
-                                onCheckedChange={(checked) => {
-                                    setIsGlobal(checked as boolean);
-                                    form.setValue("isGlobal", checked as boolean);
+                                onChange={(e) => {
+                                    setIsGlobal(e.target.checked);
+                                    form.setValue("isGlobal", e.target.checked);
                                 }}
+                                className="w-4 h-4 rounded border-white/10 bg-zinc-800"
                             />
                             <Label htmlFor="isGlobal" className="cursor-pointer">
                                 Genel FAQ (Site genelinde göster)
