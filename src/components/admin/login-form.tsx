@@ -94,43 +94,40 @@ export default function LoginForm() {
     }
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        addLog("Submit triggered");
+        addLog("Submit triggered - Using Custom Auth");
         setIsLoading(true);
         setError(null);
 
         try {
-            addLog("Calling signIn...");
-            // Use redirect: false to handle it manually
-            const result = await signIn("credentials", {
-                email: values.email,
-                password: values.password,
-                redirect: false,
+            addLog("Calling custom login API...");
+
+            const res = await fetch("/api/auth/custom-login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
             });
 
-            addLog(`SignIn Result: ${JSON.stringify(result)}`);
+            const data = await res.json();
+            addLog(`Login Result: ${JSON.stringify(data)}`);
 
             setIsLoading(false);
 
-            if (result?.error) {
-                addLog("Login Error: " + result.error);
+            if (!data.success) {
+                addLog("Login Error: " + data.message);
                 setError("Geçersiz e-posta veya şifre.");
-                import("sonner").then(({ toast }) => toast.error("Hata: " + result.error));
-            } else if (result?.ok) {
-                addLog("Login Success! Waiting for session...");
+                import("sonner").then(({ toast }) => toast.error("Hata: " + data.message));
+            } else {
+                addLog("Login Success! Redirecting...");
                 import("sonner").then(({ toast }) => toast.success("Giriş başarılı! Yönlendiriliyorsunuz..."));
 
-                // Wait a bit for the session cookie to be set, then redirect
-                setTimeout(() => {
-                    addLog("Redirecting to dashboard...");
-                    window.location.href = "/admin/dashboard";
-                }, 1000); // 1 second delay to ensure cookie is set
-            } else {
-                addLog("Unknown result state");
+                // Redirect immediately - cookie is already set
+                window.location.href = "/admin/dashboard";
             }
         } catch (err: any) {
             addLog("Critical Exception: " + err.message);
             setIsLoading(false);
             setError("Sistem hatası oluştu.");
+            import("sonner").then(({ toast }) => toast.error("Bağlantı hatası"));
         }
     }
 
