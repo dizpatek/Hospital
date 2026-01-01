@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Trash2, Edit, Plus } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -24,18 +24,20 @@ export default function EditTreatmentPage() {
     const params = useParams();
     const [loading, setLoading] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [procedures, setProcedures] = useState<any[]>([]);
 
     const form = useForm({
         resolver: zodResolver(treatmentSchema),
     });
 
     useEffect(() => {
-        // Fetch treatment data
+        // Fetch treatment data and procedures
         fetch(`/api/admin/treatments/${params.id}`)
             .then((res) => res.json())
             .then((data) => {
                 if (data.success) {
                     form.reset(data.data);
+                    setProcedures(data.data.procedures || []);
                 }
             })
             .catch((err) => console.error(err));
@@ -159,6 +161,54 @@ export default function EditTreatmentPage() {
                     </Link>
                 </div>
             </form>
+
+            {/* Associated Procedures Section */}
+            <Card className="bg-zinc-900 border-white/5">
+                <CardHeader>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle>Bağlı Prosedürler</CardTitle>
+                            <CardDescription>Bu tedavi kategorisine bağlı prosedürleri yönetin</CardDescription>
+                        </div>
+                        <Button asChild size="sm">
+                            <Link href="/admin/procedures/new">
+                                <Plus className="h-4 w-4 mr-2" />
+                                Yeni Prosedür
+                            </Link>
+                        </Button>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    {procedures.length === 0 ? (
+                        <p className="text-zinc-500 text-center py-8">Bu kategoriye bağlı prosedür bulunmuyor.</p>
+                    ) : (
+                        <div className="space-y-4">
+                            {procedures.map((procedure) => (
+                                <div key={procedure.id} className="flex items-center justify-between p-4 bg-zinc-800/50 rounded-lg border border-white/5">
+                                    <div className="flex-1">
+                                        <h4 className="font-bold text-white">{procedure.name}</h4>
+                                        <p className="text-sm text-zinc-400">{procedure.summary}</p>
+                                        <span className={`inline-block px-2 py-1 text-xs rounded-full mt-2 ${procedure.status === 'PUBLISHED'
+                                                ? 'bg-green-500/10 text-green-500'
+                                                : 'bg-yellow-500/10 text-yellow-500'
+                                            }`}>
+                                            {procedure.status === 'PUBLISHED' ? 'Yayında' : 'Taslak'}
+                                        </span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button asChild variant="outline" size="sm">
+                                            <Link href={`/admin/procedures/${procedure.id}`}>
+                                                <Edit className="h-4 w-4 mr-2" />
+                                                Düzenle
+                                            </Link>
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
         </div>
     );
 }

@@ -12,7 +12,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         const { id } = await params;
         const treatment = await prisma.treatmentCategory.findUnique({
             where: { id },
-            include: { expertiseArea: true },
+            include: {
+                expertiseArea: true,
+                procedures: {
+                    orderBy: { name: "asc" }
+                }
+            },
         });
 
         if (!treatment) {
