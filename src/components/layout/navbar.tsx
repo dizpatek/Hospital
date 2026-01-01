@@ -20,6 +20,7 @@ const navItems = [
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [siteName, setSiteName] = useState("MEDDOC");
 
     useEffect(() => {
         const handleScroll = () => {
@@ -27,6 +28,21 @@ export function Navbar() {
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const response = await fetch("/api/admin/settings");
+                const data = await response.json();
+                if (data.success && data.data.siteName) {
+                    setSiteName(data.data.siteName);
+                }
+            } catch (error) {
+                console.error("Failed to fetch site settings:", error);
+            }
+        };
+        fetchSettings();
     }, []);
 
     return (
@@ -40,7 +56,7 @@ export function Navbar() {
                 <div className="flex items-center justify-between">
                     <Link href="/" className="flex items-center space-x-2">
                         <span className="text-2xl font-bold tracking-tighter text-primary">
-                            MED<span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">DOC</span>
+                            {siteName.slice(0, Math.floor(siteName.length / 2))}<span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">{siteName.slice(Math.floor(siteName.length / 2))}</span>
                         </span>
                     </Link>
 

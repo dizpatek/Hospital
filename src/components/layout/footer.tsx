@@ -1,7 +1,26 @@
+"use client";
+
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
 
 export function Footer() {
+    const [settings, setSettings] = useState<any>({});
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const response = await fetch('/api/admin/settings');
+                const data = await response.json();
+                if (data.success) {
+                    setSettings(data.data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch settings:', error);
+            }
+        };
+        fetchSettings();
+    }, []);
     return (
         <footer className="bg-background relative pt-32 pb-12 overflow-hidden border-t border-border/50">
             <div className="absolute inset-0 dot-pattern opacity-5 pointer-events-none" />
@@ -11,14 +30,18 @@ export function Footer() {
                     {/* Logo and Brand */}
                     <div className="space-y-8">
                         <Link href="/" className="text-3xl font-black tracking-tighter text-primary">
-                            MED<span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">DOC</span>
+                            {settings.siteName || "MEDDOC"}
                         </Link>
                         <p className="text-muted-foreground text-sm leading-relaxed font-medium">
-                            Üroloji ve Androlojide Mükemmeliyet. Yetişkin ve pediatrik hastalar için profesyonel, şefkatli ve ileri düzey tıbbi bakım sağlıyoruz. En modern cerrahi tekniklerle yaşam kalitenizi artırıyoruz.
+                            {settings.siteDescription || "Üroloji ve Androlojide Mükemmeliyet. Yetişkin ve pediatrik hastalar için profesyonel, şefkatli ve ileri düzey tıbbi bakım sağlıyoruz. En modern cerrahi tekniklerle yaşam kalitenizi artırıyoruz."}
                         </p>
                         <div className="flex space-x-4">
-                            {[Facebook, Instagram, Twitter].map((Icon, i) => (
-                                <a key={i} href="#" className="h-12 w-12 rounded-2xl bg-secondary/50 flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-all duration-300">
+                            {[
+                                { Icon: Facebook, url: settings.facebookUrl },
+                                { Icon: Instagram, url: settings.instagramUrl },
+                                { Icon: Twitter, url: settings.twitterUrl }
+                            ].filter(link => link.url).map(({ Icon, url }, i) => (
+                                <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="h-12 w-12 rounded-2xl bg-secondary/50 flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-all duration-300">
                                     <Icon className="h-5 w-5" />
                                 </a>
                             ))}
@@ -74,21 +97,20 @@ export function Footer() {
                                     <MapPin className="h-5 w-5" />
                                 </div>
                                 <span className="text-sm font-medium text-muted-foreground leading-relaxed">
-                                    Nişantaşı Mahallesi, Teşvikiye Cd. <br />
-                                    No: 123, Şişli / İstanbul
+                                    {settings.address || "Nişantaşı Mahallesi, Teşvikiye Cd. No: 123, Şişli / İstanbul"}
                                 </span>
                             </li>
                             <li className="flex items-center space-x-4">
                                 <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
                                     <Phone className="h-5 w-5" />
                                 </div>
-                                <span className="text-sm font-bold text-foreground">+90 (212) 123 45 67</span>
+                                <span className="text-sm font-bold text-foreground">{settings.contactPhone || "+90 (212) 123 45 67"}</span>
                             </li>
                             <li className="flex items-center space-x-4">
                                 <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
                                     <Mail className="h-5 w-5" />
                                 </div>
-                                <span className="text-sm font-bold text-foreground">bilgi@meddoc.com.tr</span>
+                                <span className="text-sm font-bold text-foreground">{settings.contactEmail || "bilgi@meddoc.com.tr"}</span>
                             </li>
                         </ul>
                     </div>
@@ -96,7 +118,7 @@ export function Footer() {
 
                 <div className="border-t border-border/50 pt-10 flex flex-col md:flex-row justify-between items-center bg-transparent gap-6">
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                        © {new Date().getFullYear()} MEDDOC Klinikleri. Mükemmeliyetle Tasarlanmıştır.
+                        © {new Date().getFullYear()} {settings.siteName || "MEDDOC"} Klinikleri. Mükemmeliyetle Tasarlanmıştır.
                     </p>
                     <div className="flex space-x-8">
                         <Link href="/privacy" className="text-xs font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest">Gizlilik</Link>

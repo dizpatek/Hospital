@@ -4,10 +4,24 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ShieldCheck, Star, Users } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import { AppointmentDialog } from "@/components/appointment-dialog";
 
 export function Hero() {
+    const [description, setDescription] = useState("Prostat, böbrek taşları ve erkek cinsel sağlığı için cerrahi ve tıbbi tedavilerde mükemmeliyet. En son teknoloji ile hasta odaklı çözümler.");
+
+    useEffect(() => {
+        fetch('/api/admin/settings')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.data.siteDescription) {
+                    setDescription(data.data.siteDescription);
+                }
+            })
+            .catch(err => console.error('Failed to fetch settings', err));
+    }, []);
+
     return (
         <section className="relative pt-32 pb-40 lg:pt-48 lg:pb-64 overflow-hidden animated-gradient">
             {/* Dot Pattern Overlay */}
@@ -47,7 +61,7 @@ export function Hero() {
                             transition={{ duration: 0.5, delay: 0.2 }}
                             className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
                         >
-                            Prostat, böbrek taşları ve erkek cinsel sağlığı için cerrahi ve tıbbi tedavilerde mükemmeliyet. En son teknoloji ile hasta odaklı çözümler.
+                            {description}
                         </motion.p>
 
                         <motion.div
