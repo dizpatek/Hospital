@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -56,11 +56,6 @@ export default function SettingsPage() {
 
     const siteForm = useForm({
         resolver: zodResolver(siteSettingsSchema),
-        defaultValues: {
-            siteName: "MedDoc",
-            primaryColor: "#0ea5e9",
-            secondaryColor: "#8b5cf6",
-        },
     });
 
     const socialForm = useForm({
@@ -70,6 +65,43 @@ export default function SettingsPage() {
     const seoForm = useForm({
         resolver: zodResolver(seoSchema),
     });
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await fetch('/api/admin/settings');
+                const result = await res.json();
+                if (result.success) {
+                    const data = result.data;
+                    siteForm.reset({
+                        siteName: data.siteName || '',
+                        siteDescription: data.siteDescription || '',
+                        primaryColor: data.primaryColor || '#0ea5e9',
+                        secondaryColor: data.secondaryColor || '#8b5cf6',
+                        contactEmail: data.contactEmail || '',
+                        contactPhone: data.contactPhone || '',
+                        whatsappNumber: data.whatsappNumber || '',
+                        address: data.address || '',
+                    });
+                    socialForm.reset({
+                        facebookUrl: data.facebookUrl || '',
+                        instagramUrl: data.instagramUrl || '',
+                        twitterUrl: data.twitterUrl || '',
+                        linkedinUrl: data.linkedinUrl || '',
+                    });
+                    seoForm.reset({
+                        metaTitle: data.metaTitle || '',
+                        metaDescription: data.metaDescription || '',
+                        metaKeywords: data.metaKeywords || '',
+                        googleAnalyticsId: data.googleAnalyticsId || '',
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to fetch settings:', error);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     const onPasswordSubmit = async (data: z.infer<typeof passwordSchema>) => {
         setLoading(true);

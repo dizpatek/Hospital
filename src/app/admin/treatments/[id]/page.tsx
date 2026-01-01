@@ -17,6 +17,7 @@ const treatmentSchema = z.object({
     name: z.string().min(1, "Tedavi adı gerekli"),
     slug: z.string().min(1, "Slug gerekli"),
     description: z.string().optional(),
+    procedureIds: z.array(z.string()).optional(),
 });
 
 export default function EditTreatmentPage() {
@@ -25,6 +26,8 @@ export default function EditTreatmentPage() {
     const [loading, setLoading] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [procedures, setProcedures] = useState<any[]>([]);
+    const [allProcedures, setAllProcedures] = useState<any[]>([]);
+    const [selectedProcedureIds, setSelectedProcedureIds] = useState<string[]>([]);
 
     const form = useForm({
         resolver: zodResolver(treatmentSchema),
@@ -38,10 +41,23 @@ export default function EditTreatmentPage() {
                 if (data.success) {
                     form.reset(data.data);
                     setProcedures(data.data.procedures || []);
+                    setSelectedProcedureIds(data.data.procedures.map((p: any) => p.id));
                 }
             })
             .catch((err) => console.error(err));
     }, [params.id]);
+
+    useEffect(() => {
+        // Fetch all procedures
+        fetch('/api/admin/procedures')
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.success) {
+                    setAllProcedures(data.data);
+                }
+            })
+            .catch((err) => console.error(err));
+    }, []);
 
     const onSubmit = async (data: z.infer<typeof treatmentSchema>) => {
         setLoading(true);
@@ -49,7 +65,7 @@ export default function EditTreatmentPage() {
             const res = await fetch(`/api/admin/treatments/${params.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+                body: JSON.stringify({ ...data, procedureIds: selectedProcedureIds }),
             });
 
             const result = await res.json();
@@ -147,6 +163,31 @@ export default function EditTreatmentPage() {
                                 placeholder="Tedavi kategorisi hakkında açıklama..."
                             />
                         </div>
+                        <div className="space-y-2">
+                            <Label>Prosedürler</Label>
+                            <div className="max-h-60 overflow-y-auto border border-white/10 rounded-md p-2 bg-zinc-800">
+                                {allProcedures.map((procedure) => (
+                                    <div key={procedure.id} className="flex items-center space-x-2">
+                                        <input
+                                            type="checkbox"
+                                            id={`procedure-${procedure.id}`}
+                                            checked={selectedProcedureIds.includes(procedure.id)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setSelectedProcedureIds([...selectedProcedureIds, procedure.id]);
+                                                } else {
+                                                    setSelectedProcedureIds(selectedProcedureIds.filter(id => id !== procedure.id));
+                                                }
+                                            }}
+                                            className="rounded border-white/10 bg-zinc-700"
+                                        />
+                                        <label htmlFor={`procedure-${procedure.id}`} className="text-sm text-white cursor-pointer">
+                                            {procedure.name}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -189,8 +230,8 @@ export default function EditTreatmentPage() {
                                         <h4 className="font-bold text-white">{procedure.name}</h4>
                                         <p className="text-sm text-zinc-400">{procedure.summary}</p>
                                         <span className={`inline-block px-2 py-1 text-xs rounded-full mt-2 ${procedure.status === 'PUBLISHED'
-                                                ? 'bg-green-500/10 text-green-500'
-                                                : 'bg-yellow-500/10 text-yellow-500'
+                                            ? 'bg-green-500/10 text-green-500'
+                                            : 'bg-yellow-500/10 text-yellow-500'
                                             }`}>
                                             {procedure.status === 'PUBLISHED' ? 'Yayında' : 'Taslak'}
                                         </span>

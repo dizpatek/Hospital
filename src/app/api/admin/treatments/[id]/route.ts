@@ -59,6 +59,25 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
             },
         });
 
+        // Handle procedure assignments
+        if (data.procedureIds) {
+            await prisma.$transaction([
+                // Unassign procedures not in the selected list
+                prisma.procedure.updateMany({
+                    where: {
+                        treatmentCategoryId: id,
+                        id: { notIn: data.procedureIds },
+                    },
+                    data: { treatmentCategoryId: null },
+                }),
+                // Assign selected procedures
+                prisma.procedure.updateMany({
+                    where: { id: { in: data.procedureIds } },
+                    data: { treatmentCategoryId: id },
+                }),
+            ]);
+        }
+
         return NextResponse.json({
             success: true,
             message: "Tedavi güncellendi",
