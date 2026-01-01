@@ -76,8 +76,8 @@ export default function LoginForm() {
                 import("sonner").then(({ toast }) => toast.error("Giriş Başarısız: " + result.error));
             } else if (result?.ok) {
                 import("sonner").then(({ toast }) => toast.success("Giriş başarılı! Yönlendiriliyorsunuz..."));
-                router.push("/admin/dashboard");
-                router.refresh();
+                // Force a hard redirect to ensure cookies are properly updated for the server session
+                window.location.href = "/admin/dashboard";
             }
         } catch (err: any) {
             console.error("Critical Login Error:", err);
