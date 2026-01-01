@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Settings, Palette, User, Globe, Mail } from "lucide-react";
+import { Settings, Palette, User, Globe, Mail, Code } from "lucide-react";
 import { toast } from "sonner";
 
 const passwordSchema = z.object({
@@ -49,6 +49,8 @@ const seoSchema = z.object({
 export default function SettingsPage() {
     const [loading, setLoading] = useState(false);
     const [settings, setSettings] = useState<any>(null);
+    const [scriptLoading, setScriptLoading] = useState<string | null>(null);
+    const [scriptResult, setScriptResult] = useState<{ script: string; success: boolean; output: string } | null>(null);
 
     const passwordForm = useForm({
         resolver: zodResolver(passwordSchema),
@@ -196,6 +198,39 @@ export default function SettingsPage() {
         }
     };
 
+    const runScript = async (scriptName: string) => {
+        setScriptLoading(scriptName);
+        setScriptResult(null);
+        try {
+            const res = await fetch(`/api/admin/scripts/${scriptName}`, {
+                method: "POST",
+            });
+
+            const result = await res.json();
+
+            setScriptResult({
+                script: scriptName,
+                success: result.success,
+                output: result.output || result.error || 'No output',
+            });
+
+            if (result.success) {
+                toast.success(`${scriptName} script executed successfully`);
+            } else {
+                toast.error(`${scriptName} script failed`);
+            }
+        } catch (error) {
+            setScriptResult({
+                script: scriptName,
+                success: false,
+                output: 'Network error or script execution failed',
+            });
+            toast.error("Script execution failed");
+        } finally {
+            setScriptLoading(null);
+        }
+    };
+
     return (
         <div className="space-y-8">
             <div>
@@ -224,6 +259,10 @@ export default function SettingsPage() {
                     <TabsTrigger value="account" className="data-[state=active]:bg-primary">
                         <User className="w-4 h-4 mr-2" />
                         Hesap
+                    </TabsTrigger>
+                    <TabsTrigger value="scripts" className="data-[state=active]:bg-primary">
+                        <Code className="w-4 h-4 mr-2" />
+                        Scripts
                     </TabsTrigger>
                 </TabsList>
 
@@ -430,6 +469,72 @@ export default function SettingsPage() {
                                     {loading ? "Değiştiriliyor..." : "Şifreyi Değiştir"}
                                 </Button>
                             </form>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="scripts" className="space-y-6">
+                    <Card className="bg-zinc-900 border-white/5">
+                        <CardHeader>
+                            <CardTitle>Script Yönetimi</CardTitle>
+                            <CardDescription>Sistem scriptlerini çalıştırın</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <div className="space-y-2">
+                                    <Label>Add Blogs</Label>
+                                    <p className="text-sm text-zinc-400">Demo blog yazıları ekler</p>
+                                    <Button
+                                        onClick={() => runScript('add-blogs')}
+                                        disabled={scriptLoading === 'add-blogs'}
+                                        className="w-full"
+                                    >
+                                        {scriptLoading === 'add-blogs' ? 'Çalışıyor...' : 'Çalıştır'}
+                                    </Button>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Configuration Wizard</Label>
+                                    <p className="text-sm text-zinc-400">Environment değişkenlerini yapılandırır (dry-run)</p>
+                                    <Button
+                                        onClick={() => runScript('conf-wiz')}
+                                        disabled={scriptLoading === 'conf-wiz'}
+                                        className="w-full"
+                                    >
+                                        {scriptLoading === 'conf-wiz' ? 'Çalışıyor...' : 'Çalıştır'}
+                                    </Button>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Create Admin</Label>
+                                    <p className="text-sm text-zinc-400">Admin kullanıcısı oluşturur</p>
+                                    <Button
+                                        onClick={() => runScript('create-admin')}
+                                        disabled={scriptLoading === 'create-admin'}
+                                        className="w-full"
+                                    >
+                                        {scriptLoading === 'create-admin' ? 'Çalışıyor...' : 'Çalıştır'}
+                                    </Button>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Deploy to Vercel</Label>
+                                    <p className="text-sm text-zinc-400">Projeyi Vercel'e deploy eder</p>
+                                    <Button
+                                        onClick={() => runScript('deploy-vercel')}
+                                        disabled={scriptLoading === 'deploy-vercel'}
+                                        className="w-full"
+                                    >
+                                        {scriptLoading === 'deploy-vercel' ? 'Çalışıyor...' : 'Çalıştır'}
+                                    </Button>
+                                </div>
+                            </div>
+                            {scriptResult && (
+                                <div className="mt-6">
+                                    <Label>Sonuç ({scriptResult.script})</Label>
+                                    <pre className={`mt-2 p-4 rounded-md text-sm overflow-auto max-h-96 ${scriptResult.success ? 'bg-green-900/20 text-green-400' : 'bg-red-900/20 text-red-400'
+                                        }`}>
+                                        {scriptResult.output}
+                                    </pre>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>
