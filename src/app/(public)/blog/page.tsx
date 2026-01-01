@@ -21,7 +21,7 @@ export default async function BlogPage() {
     });
 
     return (
-        <div className="pt-40 pb-32 relative min-h-screen bg-zinc-950 overflow-hidden">
+        <div className="pt-40 pb-32 relative min-h-screen bg-background overflow-hidden">
             <div className="absolute inset-0 dot-pattern opacity-5" />
 
             <div className="container mx-auto px-4 md:px-6 relative z-10">

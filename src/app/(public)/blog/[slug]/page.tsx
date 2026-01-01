@@ -38,7 +38,7 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
     if (!post) notFound();
 
     return (
-        <article className="pt-32 pb-24 bg-white dark:bg-zinc-950 min-h-screen font-sans">
+        <article className="pt-32 pb-24 bg-background min-h-screen font-sans">
             <div className="container mx-auto px-4 md:px-6">
 
                 {/* Back Link & Navigation */}
