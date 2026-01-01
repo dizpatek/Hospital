@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, User } from "lucide-react";
+import { Plus, FileText, Calendar, Eye } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export const metadata = {
@@ -16,77 +17,82 @@ export default async function AdminBlogPage() {
     });
 
     return (
-        <div className="pt-32 pb-24 bg-zinc-50 dark:bg-zinc-950 min-h-screen font-sans">
-            <div className="container mx-auto px-4 md:px-6">
-                <div className="flex justify-between items-center mb-12">
-                    <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white">
-                        Blog Yönetimi
-                    </h1>
-                    <Button asChild className="bg-blue-600 text-white hover:bg-blue-700">
-                        <Link href="/admin/blog/new">Yeni Blog Yazısı Ekle</Link>
-                    </Button>
-                </div>
-
-                {posts.length === 0 ? (
-                    <div className="text-center py-20 bg-white dark:bg-zinc-900 rounded-3xl border border-dashed border-slate-200 dark:border-zinc-800">
-                        <p className="text-slate-500">Henüz yayınlanmış blog gönderisi yok.</p>
+        <div className="space-y-10">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-10 bg-zinc-900/40 backdrop-blur-xl rounded-[3rem] border border-white/5 shadow-2xl">
+                <div className="space-y-2">
+                    <div className="flex items-center gap-3 text-primary">
+                        <FileText className="h-6 w-6" />
+                        <span className="text-xs font-black uppercase tracking-[0.3em]">İçerik Yönetimi</span>
                     </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {posts.map((post) => (
-                            <div
-                                key={post.id}
-                                className="group bg-white dark:bg-zinc-900 rounded-3xl border border-slate-200 dark:border-zinc-800 overflow-hidden hover:shadow-2xl transition-all flex flex-col"
-                            >
-                                <div className="p-8 flex flex-col h-full">
-                                    <div className="flex items-center space-x-4 mb-4">
+                    <h2 className="text-4xl font-black tracking-tight text-white">Blog Yazıları</h2>
+                    <p className="text-muted-foreground font-medium text-lg max-w-2xl">
+                        Blog yazılarınızı oluşturun, düzenleyin ve yayınlayın.
+                    </p>
+                </div>
+                <Button asChild className="h-16 px-10 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-lg shadow-xl shadow-primary/20 transition-all active:scale-95">
+                    <Link href="/admin/blog/new">
+                        <Plus className="mr-3 h-6 w-6" /> Yeni Yazı Ekle
+                    </Link>
+                </Button>
+            </div>
+
+            {posts.length === 0 ? (
+                <Card className="border border-white/5 shadow-2xl bg-zinc-900/40 backdrop-blur-xl rounded-[3rem]">
+                    <CardContent className="p-20 text-center">
+                        <p className="text-zinc-500 text-lg">Henüz blog yazısı eklenmemiş.</p>
+                    </CardContent>
+                </Card>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {posts.map((post) => (
+                        <Card key={post.id} className="bg-zinc-900/40 border-white/5 hover:border-primary/50 transition-all group">
+                            <CardContent className="p-6">
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-2">
                                         {post.category && (
-                                            <Badge className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 border-none font-bold">
+                                            <Badge variant="outline" className="text-xs">
                                                 {post.category.name}
                                             </Badge>
                                         )}
-                                        <span className={`text-[10px] uppercase font-bold tracking-widest ${post.status === 'PUBLISHED' ? 'text-green-500' : 'text-amber-500'}`}>
-                                            • {post.status === 'PUBLISHED' ? 'Yayında' : 'Taslak'}
-                                        </span>
+                                        <Badge
+                                            variant={post.status === 'PUBLISHED' ? 'default' : 'secondary'}
+                                            className="text-xs"
+                                        >
+                                            {post.status === 'PUBLISHED' ? 'Yayında' : 'Taslak'}
+                                        </Badge>
                                     </div>
 
-                                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 line-clamp-2">
+                                    <h3 className="text-xl font-black text-white group-hover:text-primary transition-colors line-clamp-2">
                                         {post.title}
                                     </h3>
 
-                                    <div className="flex items-center space-x-4 text-xs text-slate-500 mb-6 pb-6 border-b border-slate-100 dark:border-zinc-800">
-                                        <div className="flex items-center">
-                                            <Calendar className="mr-1.5 h-3.5 w-3.5" />
-                                            {new Date(post.createdAt).toLocaleDateString("tr-TR")}
-                                        </div>
-                                    </div>
-
-                                    <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-3 mb-8 leading-relaxed">
-                                        {post.excerpt || post.content.substring(0, 150) + "..."}
+                                    <p className="text-sm text-zinc-400 line-clamp-3">
+                                        {post.excerpt || post.content.substring(0, 100) + "..."}
                                     </p>
 
-                                    <div className="mt-auto pt-4 flex items-center justify-between">
-                                        <Link
-                                            href={`/admin/blog/${post.id}`}
-                                            className="inline-flex items-center text-blue-600 font-bold text-sm tracking-tight"
-                                        >
-                                            Makaleyi Düzenle
-                                            <ArrowRight className="ml-1.5 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
+                                    <div className="flex items-center gap-2 text-xs text-zinc-500">
+                                        <Calendar className="h-3 w-3" />
+                                        {new Date(post.createdAt).toLocaleDateString("tr-TR")}
+                                    </div>
+
+                                    <div className="pt-4 border-t border-white/5 flex gap-2">
+                                        <Link href={`/admin/blog/${post.id}`} className="flex-1">
+                                            <Button variant="outline" className="w-full">
+                                                Düzenle
+                                            </Button>
                                         </Link>
-                                        <Link
-                                            href={`/blog/${post.slug}`}
-                                            target="_blank"
-                                            className="text-slate-400 hover:text-slate-600 text-[10px] font-bold underline underline-offset-4"
-                                        >
-                                            Önizle
+                                        <Link href={`/blog/${post.slug}`} target="_blank">
+                                            <Button variant="ghost" size="icon">
+                                                <Eye className="h-4 w-4" />
+                                            </Button>
                                         </Link>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
