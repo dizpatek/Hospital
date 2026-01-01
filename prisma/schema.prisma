@@ -147,3 +147,27 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model SiteSettings {
+  id                String   @id @default(cuid())
+  siteName          String   @default("MedDoc")
+  siteDescription   String?
+  primaryColor      String   @default("#0ea5e9")
+  secondaryColor    String   @default("#8b5cf6")
+  logoUrl           String?
+  faviconUrl        String?
+  contactEmail      String?
+  contactPhone      String?
+  whatsappNumber    String?
+  address           String?
+  facebookUrl       String?
+  instagramUrl      String?
+  twitterUrl        String?
+  linkedinUrl       String?
+  metaTitle         String?
+  metaDescription   String?
+  metaKeywords      String?
+  googleAnalyticsId String?
+  updatedAt         DateTime @updatedAt
+}
+
